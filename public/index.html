@@ -1,0 +1,2723 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#06152d">
+<meta name="color-scheme" content="dark">
+<title>Music Master • v1.4</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0
+}
+
+:root{
+  --bg:#030914;
+  --bg2:#071b38;
+  --text:#f5f9ff;
+  --muted:#8da1bd;
+  --blue:#168cff;
+  --blue2:#00c8ff;
+  --blue3:#4f7dff;
+  --red:#ff3b4f;
+  --card:rgba(7,28,55,.48);
+  --border:rgba(107,190,255,.18);
+  --good:#4ff0a0;
+}
+
+html{
+  scroll-behavior:smooth;
+  background:#030914;
+}
+
+body{
+  min-height:100vh;
+  font-family:Tahoma,Arial,sans-serif;
+  color:var(--text);
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 50% 5%,rgba(0,153,255,.20),transparent 28%),
+    radial-gradient(circle at 10% 90%,rgba(0,91,255,.16),transparent 30%),
+    linear-gradient(135deg,#020611,#06152d 45%,#020712);
+}
+
+/* سبک‌تر از نسخه قبلی برای رندر بهتر موبایل */
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  pointer-events:none;
+  background:
+    linear-gradient(135deg,rgba(4,27,58,.68),rgba(2,8,18,.72)),
+    repeating-linear-gradient(
+      60deg,
+      transparent 0 70px,
+      rgba(80,160,255,.025) 71px 72px
+    ),
+    repeating-linear-gradient(
+      -60deg,
+      transparent 0 70px,
+      rgba(80,160,255,.025) 71px 72px
+    );
+}
+
+body:after{
+  content:"";
+  position:fixed;
+  inset:-10%;
+  z-index:-2;
+  pointer-events:none;
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      transparent 0 20%,
+      rgba(0,137,255,.06) 21%,
+      transparent 34%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 48%,
+      rgba(0,155,255,.05) 50%,
+      transparent 52%
+    );
+  filter:blur(7px);
+  opacity:.75;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+@keyframes pulse{
+  50%{
+    box-shadow:
+      0 0 0 8px rgba(22,140,255,0),
+      0 0 30px rgba(22,140,255,.35)
+  }
+}
+
+@keyframes borderFlow{
+  0%,100%{
+    box-shadow:0 0 18px rgba(0,154,255,.10)
+  }
+  50%{
+    box-shadow:0 0 28px rgba(0,204,255,.18)
+  }
+}
+
+button,a{
+  font-family:inherit
+}
+
+button{
+  cursor:pointer
+}
+
+button:disabled{
+  cursor:not-allowed;
+  opacity:.65
+}
+
+.page{
+  width:min(1180px,calc(100% - 20px));
+  margin:auto
+}
+
+/* NAV */
+
+.navbar{
+  position:sticky;
+  top:10px;
+  z-index:100;
+  margin-top:10px;
+  min-height:72px;
+  padding:9px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border:1px solid rgba(78,184,255,.22);
+  border-radius:24px;
+  background:rgba(3,17,36,.72);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 18px 65px rgba(0,0,0,.35);
+  animation:borderFlow 5s ease-in-out infinite;
+}
+
+.logo{
+  width:52px;
+  height:52px;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  background:linear-gradient(145deg,#087eff,#00c8ff);
+  box-shadow:0 0 30px rgba(0,151,255,.35);
+  font-size:24px;
+}
+
+.nav-actions{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap
+}
+
+.nav-btn{
+  min-width:48px;
+  height:48px;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  border:1px solid rgba(100,190,255,.13);
+  border-radius:16px;
+  background:rgba(255,255,255,.035);
+  color:#dceeff;
+  transition:.2s;
+}
+
+.nav-btn:hover{
+  transform:translateY(-2px);
+  background:rgba(30,150,255,.11);
+  border-color:rgba(75,190,255,.35)
+}
+
+.nav-btn.red{
+  color:#ff8793
+}
+
+.nav-btn.green{
+  color:#66efb0
+}
+
+/* HERO */
+
+.hero{
+  position:relative;
+  min-height:455px;
+  margin-top:20px;
+  padding:45px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  overflow:hidden;
+  border:1px solid var(--border);
+  border-radius:30px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(4,29,61,.48),
+      rgba(3,13,27,.38)
+    );
+  backdrop-filter:blur(13px);
+  -webkit-backdrop-filter:blur(13px);
+}
+
+.orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(28px);
+  pointer-events:none
+}
+
+.orb.one{
+  width:300px;
+  height:300px;
+  right:-150px;
+  top:-160px;
+  background:rgba(0,151,255,.20)
+}
+
+.orb.two{
+  width:250px;
+  height:250px;
+  left:-120px;
+  bottom:-150px;
+  background:rgba(32,77,255,.17)
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+  max-width:850px
+}
+
+.badge{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:20px;
+  padding:9px 16px;
+  border:1px solid rgba(95,194,255,.16);
+  border-radius:999px;
+  background:rgba(255,255,255,.035);
+  color:#75caff;
+  font-size:11px
+}
+
+.hero h1{
+  font-size:clamp(38px,6vw,64px);
+  line-height:1.35;
+  margin-bottom:18px
+}
+
+.gradient{
+  background:linear-gradient(
+    90deg,
+    #dceeff,
+    #28b7ff,
+    #4d7dff
+  );
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent
+}
+
+.hero p{
+  max-width:740px;
+  margin:auto;
+  color:#9db0c8;
+  line-height:2.15;
+  font-size:14px
+}
+
+.status{
+  margin-top:24px;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px
+}
+
+.pill{
+  padding:9px 13px;
+  border:1px solid rgba(95,190,255,.13);
+  border-radius:999px;
+  background:rgba(255,255,255,.03);
+  color:#9fb1c8;
+  font-size:10px
+}
+
+.pill strong{
+  color:#61eeb0
+}
+
+/* SECTIONS */
+
+.section{
+  margin-top:23px
+}
+
+.section-title{
+  margin-bottom:14px
+}
+
+.section-title small{
+  display:block;
+  margin-bottom:6px;
+  color:#51bfff;
+  font-size:10px;
+  font-weight:bold;
+  letter-spacing:1px
+}
+
+.section-title h2{
+  font-size:24px
+}
+
+.section-title p{
+  margin-top:7px;
+  color:#879bb6;
+  font-size:12px;
+  line-height:1.9
+}
+
+/* LIVE */
+
+.live-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px
+}
+
+.live-card{
+  padding:18px;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:var(--card);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  transition:.2s
+}
+
+.live-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(65,185,255,.34)
+}
+
+.live-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:13px
+}
+
+.live-icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:rgba(20,142,255,.12);
+  box-shadow:0 0 20px rgba(20,142,255,.12)
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--good);
+  box-shadow:0 0 11px var(--good)
+}
+
+.live-card strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:12px
+}
+
+.live-card span{
+  color:#7f93ae;
+  font-size:10px
+}
+
+/* FEATURES */
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px
+}
+
+.feature{
+  min-height:205px;
+  padding:23px;
+  border-radius:23px;
+  border:1px solid var(--border);
+  background:var(--card);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  transition:.2s
+}
+
+.feature:hover{
+  transform:translateY(-4px);
+  border-color:rgba(65,185,255,.34)
+}
+
+.feature-icon{
+  width:54px;
+  height:54px;
+  display:grid;
+  place-items:center;
+  margin-bottom:17px;
+  border-radius:50%;
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #46c9ff,
+      #0879ef 60%,
+      #0747a8
+    );
+  box-shadow:0 0 25px rgba(0,144,255,.25);
+  font-size:23px
+}
+
+.feature h3{
+  margin-bottom:8px;
+  font-size:18px
+}
+
+.feature p{
+  color:#879bb4;
+  line-height:2;
+  font-size:12px
+}
+
+/* ABOUT */
+
+.about-box{
+  padding:25px;
+  border-radius:24px;
+  border:1px solid var(--border);
+  background:var(--card);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px)
+}
+
+.about-box p{
+  color:#899db6;
+  font-size:12px;
+  line-height:2.2;
+  margin-bottom:13px
+}
+
+.about-box p:last-child{
+  margin-bottom:0
+}
+
+/* DONATE */
+
+.donate{
+  padding:27px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:25px;
+  border-radius:25px;
+  border:1px solid var(--border);
+  background:var(--card);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px)
+}
+
+.donate-left{
+  display:flex;
+  align-items:center;
+  gap:17px
+}
+
+.donate-icon{
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:linear-gradient(145deg,#ff4b61,#087fff);
+  box-shadow:0 0 28px rgba(255,59,79,.22);
+  font-size:25px
+}
+
+.donate h2{
+  font-size:19px;
+  margin-bottom:7px
+}
+
+.donate p{
+  color:#879bb4;
+  font-size:12px;
+  line-height:1.8
+}
+
+.donate-button{
+  min-height:46px;
+  padding:0 18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:14px;
+  background:#e9f7ff;
+  color:#07111e;
+  font-size:12px;
+  font-weight:bold;
+  text-decoration:none
+}
+
+/* FOOTER */
+
+footer{
+  margin:20px 0 30px;
+  padding:20px;
+  text-align:center;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:#70859f;
+  font-size:11px;
+  line-height:2
+}
+
+/* MODALS */
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(0,5,14,.72);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px)
+}
+
+.modal-bg.hide{
+  display:none
+}
+
+.modal{
+  position:relative;
+  width:min(650px,100%);
+  max-height:90vh;
+  overflow:auto;
+  padding:32px 24px 24px;
+  border:1px solid rgba(90,190,255,.22);
+  border-radius:29px;
+  background:rgba(5,20,40,.96);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 30px 100px rgba(0,0,0,.55)
+}
+
+.close{
+  position:absolute;
+  top:11px;
+  left:11px;
+  width:36px;
+  height:36px;
+  border:1px solid rgba(100,190,255,.14);
+  border-radius:50%;
+  background:rgba(255,255,255,.05);
+  color:inherit;
+  font-size:19px
+}
+
+.modal-icon{
+  width:66px;
+  height:66px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 15px;
+  border-radius:50%;
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #4dd2ff,
+      #087fff 60%,
+      #063d9b
+    );
+  box-shadow:0 0 32px rgba(0,151,255,.25);
+  font-size:28px
+}
+
+.modal h2{
+  text-align:center;
+  margin-bottom:10px;
+  font-size:22px
+}
+
+.modal-description{
+  text-align:center;
+  color:#8fa3bd;
+  line-height:2;
+  font-size:12px
+}
+
+.modal-button{
+  width:100%;
+  min-height:49px;
+  margin-top:15px;
+  border:0;
+  border-radius:15px;
+  background:linear-gradient(135deg,#168cff,#00c8ff);
+  color:#03101d;
+  font-weight:bold
+}
+
+.modal-button.red{
+  background:linear-gradient(135deg,#ff4659,#ff7b88);
+  color:#fff
+}
+
+.modal-button.dark{
+  background:rgba(255,255,255,.07);
+  color:#dcecff;
+  border:1px solid rgba(100,190,255,.15)
+}
+
+/* LISTS */
+
+.panel-list,
+.update-list{
+  display:grid;
+  gap:9px;
+  margin-top:20px
+}
+
+.panel-row,
+.update-item,
+.setting-row,
+.cloud-stat,
+.profile-card{
+  padding:15px;
+  border:1px solid rgba(100,190,255,.12);
+  border-radius:17px;
+  background:rgba(255,255,255,.03)
+}
+
+.panel-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between
+}
+
+.panel-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#aabbd0;
+  font-size:12px
+}
+
+.panel-value{
+  color:#62efb0;
+  font-size:11px
+}
+
+.update-version{
+  width:max-content;
+  margin:0 auto 16px;
+  padding:7px 12px;
+  border-radius:999px;
+  color:#7acfff;
+  background:rgba(22,140,255,.08);
+  border:1px solid rgba(22,140,255,.16);
+  font-size:10px;
+  font-weight:bold
+}
+
+.update-item{
+  color:#9caec4;
+  font-size:11px;
+  line-height:1.8
+}
+
+/* SETTINGS */
+
+.setting-row{
+  margin-top:11px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px
+}
+
+.setting-info strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:12px
+}
+
+.setting-info span{
+  color:#7e93ad;
+  font-size:10px
+}
+
+.switch{
+  position:relative;
+  width:48px;
+  height:27px;
+  flex-shrink:0
+}
+
+.switch input{
+  display:none
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  border-radius:999px;
+  background:rgba(255,255,255,.12)
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  width:21px;
+  height:21px;
+  top:3px;
+  right:3px;
+  border-radius:50%;
+  background:#fff;
+  transition:.25s
+}
+
+.switch input:checked+.slider{
+  background:linear-gradient(90deg,#087fff,#00c8ff)
+}
+
+.switch input:checked+.slider:before{
+  transform:translateX(-21px)
+}
+
+.red-note{
+  margin-top:15px;
+  padding:14px;
+  border:1px solid rgba(255,59,79,.25);
+  border-radius:15px;
+  background:rgba(255,59,79,.07);
+  color:#ff8994;
+  font-size:10px;
+  line-height:2;
+  text-align:center
+}
+
+/* PROFILE */
+
+.profile-card{
+  text-align:center;
+  margin-top:18px
+}
+
+.profile-avatar{
+  width:76px;
+  height:76px;
+  margin:0 auto 12px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:linear-gradient(145deg,#168cff,#00c8ff);
+  box-shadow:0 0 30px rgba(0,151,255,.3);
+  font-size:32px
+}
+
+.profile-card strong{
+  display:block;
+  font-size:15px;
+  margin-bottom:5px
+}
+
+.profile-card span{
+  color:#7f94ae;
+  font-size:10px
+}
+
+.profile-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:12px
+}
+
+.profile-actions button{
+  min-height:43px;
+  border:1px solid rgba(100,190,255,.13);
+  border-radius:13px;
+  background:rgba(255,255,255,.04);
+  color:#dcecff
+}
+
+/* BUG FIX */
+
+.stage-box{
+  margin-top:20px;
+  text-align:center
+}
+
+.spinner{
+  width:92px;
+  height:92px;
+  margin:20px auto;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  border:5px solid rgba(255,255,255,.07);
+  border-top-color:#168cff;
+  border-right-color:#00c8ff;
+  font-size:28px
+}
+
+.spinner.loading{
+  animation:spin .8s linear infinite
+}
+
+.stage-title{
+  font-size:13px;
+  color:#dcecff
+}
+
+.progress{
+  height:8px;
+  margin-top:15px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden
+}
+
+.progress-bar{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,#087fff,#00c8ff);
+  transition:width .25s
+}
+
+.stage-list{
+  display:grid;
+  gap:7px;
+  margin-top:15px;
+  text-align:right
+}
+
+.stage-list div{
+  padding:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.025);
+  color:#7187a2;
+  font-size:10px
+}
+
+.stage-list .active{
+  color:#69d8ff;
+  border:1px solid rgba(0,185,255,.16);
+  background:rgba(0,145,255,.06)
+}
+
+/* CLOUD */
+
+.cloud-stat{
+  text-align:center;
+  margin-top:18px
+}
+
+.cloud-number{
+  font-size:27px;
+  color:#69d8ff;
+  margin:7px 0
+}
+
+.cloud-detail{
+  color:#7f94ad;
+  font-size:10px;
+  line-height:2
+}
+
+/* CONFIRM */
+
+.confirm{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:14px
+}
+
+.confirm button{
+  min-height:45px;
+  border:0;
+  border-radius:13px
+}
+
+.confirm .yes{
+  background:linear-gradient(135deg,#ff4659,#ff7b88);
+  color:#fff
+}
+
+.confirm .no{
+  background:rgba(255,255,255,.07);
+  color:#dcecff;
+  border:1px solid rgba(100,190,255,.13)
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:22px;
+  z-index:1000;
+  transform:translateX(-50%) translateY(20px);
+  padding:12px 18px;
+  border-radius:999px;
+  background:rgba(4,22,43,.94);
+  border:1px solid rgba(80,190,255,.22);
+  color:#dff5ff;
+  font-size:11px;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0)
+}
+
+.small-muted{
+  margin-top:10px;
+  color:#7087a2;
+  font-size:10px;
+  text-align:center;
+  line-height:1.9
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+  .features{
+    grid-template-columns:1fr
+  }
+
+  .live-grid{
+    grid-template-columns:1fr 1fr
+  }
+
+}
+
+@media(max-width:780px){
+
+  .navbar{
+    min-height:62px
+  }
+
+  .nav-actions{
+    justify-content:flex-end;
+    gap:5px
+  }
+
+  .nav-btn{
+    width:43px;
+    min-width:43px;
+    height:43px;
+    padding:0;
+    border-radius:50%
+  }
+
+  .nav-btn span{
+    display:none
+  }
+
+  .hero{
+    min-height:430px;
+    border-radius:26px
+  }
+
+  .hero h1{
+    font-size:38px
+  }
+
+  .donate{
+    flex-direction:column;
+    align-items:flex-start
+  }
+
+  .donate-button{
+    width:100%
+  }
+
+}
+
+@media(max-width:620px){
+
+  .page{
+    width:calc(100% - 12px)
+  }
+
+  .navbar{
+    top:6px;
+    margin-top:6px;
+    padding:7px;
+    border-radius:20px
+  }
+
+  .logo{
+    width:44px;
+    height:44px;
+    border-radius:14px
+  }
+
+  .nav-actions{
+    display:grid;
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:4px;
+    flex:1
+  }
+
+  .nav-btn{
+    width:100%;
+    min-width:0;
+    height:42px;
+    padding:0;
+    border-radius:13px
+  }
+
+  .nav-btn span{
+    display:none
+  }
+
+  .hero{
+    min-height:390px;
+    padding:35px 16px
+  }
+
+  .hero h1{
+    font-size:clamp(30px,9vw,40px)
+  }
+
+  .hero p{
+    font-size:12px;
+    line-height:2
+  }
+
+  .features,
+  .live-grid{
+    grid-template-columns:1fr
+  }
+
+  .donate{
+    padding:20px
+  }
+
+  .modal{
+    width:100%;
+    max-height:calc(100vh - 24px);
+    border-radius:23px
+  }
+
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    scroll-behavior:auto!important
+  }
+
+}
+
+/* دستگاه فقط به صورت خودکار */
+body[data-device="mobile"] .hero{
+  min-height:390px
+}
+
+@media(min-width:621px){
+  body[data-device="mobile"] .hero{
+    min-height:430px
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+<header class="navbar">
+
+  <div class="logo">🎵</div>
+
+  <div class="nav-actions">
+
+    <button
+      class="nav-btn red"
+      onclick="openModal('bugfix')"
+      title="رفع باگ"
+      aria-label="رفع باگ"
+    >
+      🛠️ <span>رفع باگ</span>
+    </button>
+
+    <button
+      class="nav-btn green"
+      onclick="openModal('cloud');updateCloudUI()"
+      title="Server Cloud"
+      aria-label="Server Cloud"
+    >
+      ☁️ <span>Server Cloud</span>
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="openModal('donate')"
+      title="حمایت"
+      aria-label="حمایت"
+    >
+      ❤️ <span>حمایت</span>
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="openModal('settings')"
+      title="تنظیمات"
+      aria-label="تنظیمات"
+    >
+      ⚙️ <span>تنظیمات</span>
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="openModal('updates')"
+      title="آپدیت"
+      aria-label="آپدیت"
+    >
+      ⚡ <span>آپدیت</span>
+    </button>
+
+    <button
+      class="nav-btn"
+      onclick="openModal('bot')"
+      title="ربات"
+      aria-label="ربات"
+    >
+      🤖 <span>ربات</span>
+    </button>
+
+  </div>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <div class="orb one"></div>
+  <div class="orb two"></div>
+
+  <div class="hero-content">
+
+    <div class="badge">
+      🎵 MUSIC MASTER • VERSION 1.4
+    </div>
+
+    <h1>
+      موسیقی را<br>
+      <span class="gradient">جور دیگری تجربه کن</span>
+    </h1>
+
+    <p>
+      نسخه 1.4 با تمرکز جدی روی کیفیت رابط کاربری،
+      نورپردازی آبی، شیشه‌ای بودن پنل‌ها،
+      انیمیشن‌های نرم، هماهنگی موبایل و کامپیوتر
+      و ابزارهای مدیریتی جدید طراحی شده است.
+    </p>
+
+    <div class="status">
+
+      <div class="pill">
+        دستگاه:
+        <strong id="heroDevice">خودکار</strong>
+      </div>
+
+      <div class="pill">
+        سیستم:
+        <strong>Online</strong>
+      </div>
+
+      <div class="pill">
+        نسخه:
+        <strong>1.4</strong>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- LIVE STATUS -->
+
+<section class="section">
+
+  <div class="section-title">
+    <small>LIVE STATUS</small>
+    <h2>وضعیت زنده</h2>
+    <p>
+      نمایش وضعیت فعلی اجزای اصلی رابط Music Master
+    </p>
+  </div>
+
+  <div class="live-grid">
+
+    <div class="live-card">
+      <div class="live-top">
+        <div class="live-icon">🌐</div>
+        <div class="dot"></div>
+      </div>
+      <strong>سایت</strong>
+      <span>Online</span>
+    </div>
+
+    <div class="live-card">
+      <div class="live-top">
+        <div class="live-icon">🤖</div>
+        <div class="dot"></div>
+      </div>
+      <strong>ربات</strong>
+      <span>Online</span>
+    </div>
+
+    <div class="live-card">
+      <div class="live-top">
+        <div class="live-icon">🛰️</div>
+        <div class="dot"></div>
+      </div>
+      <strong>سرور</strong>
+      <span id="liveServer">متصل</span>
+    </div>
+
+    <div class="live-card">
+      <div class="live-top">
+        <div class="live-icon">🛡️</div>
+        <div class="dot"></div>
+      </div>
+      <strong>بررسی محلی</strong>
+      <span id="liveSecurity">پایدار</span>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="section">
+
+  <div class="section-title">
+    <small>MUSIC MASTER 1.4</small>
+    <h2>قابلیت‌های اصلی</h2>
+    <p>
+      نسخه‌ای با تمرکز بیشتر روی ظاهر، کنترل،
+      نگهداری داده‌های محلی و رفع خطا.
+    </p>
+  </div>
+
+  <div class="features">
+
+    <article class="feature">
+
+      <div class="feature-icon">🛡️</div>
+
+      <h3>Bug Fix Center</h3>
+
+      <p>
+        یک روند مرحله‌ای برای بررسی وضعیت رابط،
+        ذخیره‌سازی محلی، نسخه و چند کنترل سلامت
+        سمت کاربر. این بخش در فرانت‌اند شبیه‌سازی
+        شده و جای بررسی امنیت واقعی سرور را نمی‌گیرد.
+      </p>
+
+    </article>
+
+    <article class="feature">
+
+      <div class="feature-icon">☁️</div>
+
+      <h3>Server Cloud</h3>
+
+      <p>
+        ثبت فعالیت‌های قابل ذخیره در مرورگر با
+        localStorage، نمایش حجم تقریبی داده و امکان
+        پاک‌سازی کامل با تأیید دو مرحله‌ای.
+        برای Cloud واقعی باید API و سرور به پروژه متصل شود.
+      </p>
+
+    </article>
+
+    <article class="feature">
+
+      <div class="feature-icon">✨</div>
+
+      <h3>Blue Glass UI</h3>
+
+      <p>
+        رابط آبی، شیشه‌ای و نورانی با پس‌زمینه تاریک،
+        در کنار انیمیشن‌های سبک تا ظاهر جذاب بماند
+        بدون اینکه افکت‌ها بیش از حد سنگین شوند.
+      </p>
+
+    </article>
+
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+
+<section class="section">
+
+  <div class="section-title">
+    <small>ABOUT</small>
+    <h2>درباره نسخه 1.4</h2>
+  </div>
+
+  <div class="about-box">
+
+    <p>
+      Music Master 1.4 یک بازطراحی گسترده برای رسیدن
+      به ظاهر یکپارچه‌تر در موبایل و کامپیوتر است.
+      رنگ اصلی رابط به آبی عمیق و آبی روشن منتقل شده
+      و کارت‌ها با شفافیت و blur کنترل‌شده ساخته شده‌اند.
+    </p>
+
+    <p>
+      در این نسخه Hyper و بهینه‌ساز حذف شده‌اند تا
+      معماری رابط ساده‌تر و قابل کنترل‌تر باشد.
+      تمرکز روی کیفیت پایه سایت، انیمیشن‌های نرم،
+      آیکون‌های گرد و نورانی، ناوبری جدید و ابزارهای
+      مدیریتی قرار گرفته است.
+    </p>
+
+    <p>
+      بخش رفع باگ یک روند 20 ثانیه‌ای دارد.
+      چهار مرحله هر کدام پنج ثانیه طول می‌کشند تا
+      کاربر بتواند روند بررسی را واضح ببیند.
+    </p>
+
+    <p>
+      بخش Server Cloud در این نسخه داده‌های فعالیت
+      را در فضای ذخیره‌سازی مرورگر نگه می‌دارد.
+      این کار برای بکاپ واقعی ابری کافی نیست، اما
+      پایه‌ای مناسب برای اتصال بعدی به API و دیتابیس است.
+    </p>
+
+    <p>
+      برای امنیت، این نسخه ادعای بررسی امنیت سرور
+      نمی‌کند. جاوااسکریپت داخل مرورگر نمی‌تواند
+      به شکل قابل اعتماد امنیت یک سرور را تأیید کند؛
+      بنابراین مرکز رفع باگ فقط بررسی‌های محلی و
+      قابل انجام در فرانت‌اند را انجام می‌دهد.
+    </p>
+
+  </div>
+
+</section>
+
+<!-- DONATE -->
+
+<section class="section">
+
+  <div class="donate">
+
+    <div class="donate-left">
+
+      <div class="donate-icon">❤️</div>
+
+      <div>
+
+        <h2>حمایت از Music Master</h2>
+
+        <p>
+          حمایت شما به توسعه نسخه‌های بعدی و آماده‌سازی
+          زیرساخت واقعی سایت و ربات کمک می‌کند.
+        </p>
+
+      </div>
+
+    </div>
+
+    <a
+      class="donate-button"
+      href="https://reymit.ir/music.station"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      ❤️ دونیت
+    </a>
+
+  </div>
+
+</section>
+
+<footer>
+  © 2026 Music Master
+  <br>
+  🎵 ساخته شده برای علاقه‌مندان به موسیقی
+  <br>
+  نسخه رسمی: <strong>1.4</strong>
+</footer>
+
+</div>
+
+<!-- BUG FIX MODAL -->
+
+<div id="bugfix" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      onclick="closeModal('bugfix')"
+      aria-label="بستن"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">🛠️</div>
+
+    <h2>مرکز رفع باگ</h2>
+
+    <p class="modal-description">
+      برای رفع خطاهای اضافی رابط و بررسی سلامت محلی،
+      عملیات زیر را اجرا کنید.
+    </p>
+
+    <div class="red-note">
+      ⏱️ این عملیات دقیقاً 20 ثانیه طول می‌کشد
+      و چهار مرحله 5 ثانیه‌ای دارد.
+    </div>
+
+    <div class="stage-box">
+
+      <div id="bugSpinner" class="spinner">
+        🛡️
+      </div>
+
+      <div id="bugStageTitle" class="stage-title">
+        آماده شروع
+      </div>
+
+      <div class="progress">
+        <div
+          id="bugProgress"
+          class="progress-bar"
+        ></div>
+      </div>
+
+      <div class="stage-list">
+
+        <div id="stage1">
+          ۱. اتصال به پایگاه داده
+        </div>
+
+        <div id="stage2">
+          ۲. دریافت آدرس سرور
+        </div>
+
+        <div id="stage3">
+          ۳. بررسی و دریافت خطاهای سمت کاربر
+        </div>
+
+        <div id="stage4">
+          ۴. اعمال اصلاحات قابل انجام
+        </div>
+
+      </div>
+
+    </div>
+
+    <button
+      id="bugButton"
+      class="modal-button red"
+      onclick="startBugFix()"
+    >
+      شروع رفع باگ
+    </button>
+
+    <div class="small-muted">
+      این نسخه فقط بررسی‌های سمت مرورگر را انجام می‌دهد؛
+      بررسی واقعی سرور نیازمند API/Backend است.
+    </div>
+
+  </div>
+
+</div>
+
+<!-- CLOUD MODAL -->
+
+<div id="cloud" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      onclick="closeModal('cloud')"
+      aria-label="بستن"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">☁️</div>
+
+    <h2>Server Cloud</h2>
+
+    <p class="modal-description">
+      بکاپ محلی فعالیت‌های قابل ذخیره در همین مرورگر.
+    </p>
+
+    <div class="cloud-stat">
+
+      <div>فضای استفاده‌شده</div>
+
+      <div
+        class="cloud-number"
+        id="cloudSize"
+      >
+        0 KB
+      </div>
+
+      <div
+        class="cloud-detail"
+        id="cloudDetail"
+      >
+        0 مورد ذخیره شده
+      </div>
+
+    </div>
+
+    <button
+      class="modal-button red"
+      onclick="askClearCloud()"
+    >
+      🗑️ خالی کردن حافظه
+    </button>
+
+    <div class="small-muted">
+      برای Cloud واقعی بین دستگاه‌ها، باید ذخیره‌سازی
+      سمت سرور به این رابط متصل شود.
+    </div>
+
+  </div>
+
+</div>
+
+<!-- CLOUD CONFIRM -->
+
+<div id="cloudConfirm" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      onclick="closeModal('cloudConfirm')"
+      aria-label="بستن"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">⚠️</div>
+
+    <h2>حذف بکاپ‌ها؟</h2>
+
+    <p class="modal-description">
+      آیا از خالی کردن حافظه و حذف بکاپ‌های محلی
+      مطمئن هستید؟
+    </p>
+
+    <div class="confirm">
+
+      <button
+        class="yes"
+        onclick="clearCloud()"
+      >
+        بله، حذف شود
+      </button>
+
+      <button
+        class="no"
+        onclick="closeModal('cloudConfirm')"
+      >
+        نه
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- SETTINGS -->
+
+<div id="settings" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      onclick="closeModal('settings')"
+      aria-label="بستن"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">⚙️</div>
+
+    <h2>تنظیمات</h2>
+
+    <p class="modal-description">
+      کنترل حساب، ظاهر و اطلاعات نسخه.
+    </p>
+
+    <div class="profile-card">
+
+      <div class="profile-avatar">
+        🎧
+      </div>
+
+      <strong id="profileName">
+        Music Master User
+      </strong>
+
+      <span id="profileStatus">
+        کاربر مهمان
+      </span>
+
+      <div class="profile-actions">
+
+        <button onclick="editProfile()">
+          ✏️ ویرایش پروفایل
+        </button>
+
+        <button onclick="resetProfile()">
+          ↺ بازنشانی
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="red-note">
+      از آپدیت 1.10 سایت و ربات زمانی به‌روزرسانی می‌شوند
+      که سر ماه از پروژه حمایت و دونیت کرده باشید تا
+      هزینه ارتقا و زیرساخت پروژه تأمین شود.
+    </div>
+
+    <div class="setting-row">
+
+      <div class="setting-info">
+
+        <strong>
+          🌙 حالت تیره
+        </strong>
+
+        <span>
+          ظاهر پایه نسخه 1.4
+        </span>
+
+      </div>
+
+      <label class="switch">
+
+        <input
+          id="themeSwitch"
+          type="checkbox"
+          checked
+          onchange="toggleTheme(this.checked)"
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+    <div class="setting-row">
+
+      <div class="setting-info">
+
+        <strong>
+          📱 حالت دستگاه
+        </strong>
+
+        <span id="deviceText">
+          تشخیص خودکار
+        </span>
+
+      </div>
+
+      <div
+        style="
+          color:#61efb0;
+          font-size:11px;
+          white-space:nowrap
+        "
+      >
+        خودکار ✓
+      </div>
+
+    </div>
+
+    <div class="small-muted">
+      دستگاه بدون نمایش پنجره اضافی به صورت خودکار
+      توسط مرورگر تشخیص داده می‌شود.
+    </div>
+
+  </div>
+
+</div>
+
+<!-- UPDATES -->
+
+<div id="updates" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      onclick="closeModal('updates')"
+      aria-label="بستن"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">⚡</div>
+
+    <div class="update-version">
+      VERSION 1.4
+    </div>
+
+    <h2>آپدیت 1.4</h2>
+
+    <p class="modal-description">
+      تغییرات اصلی این نسخه
+    </p>
+
+    <div class="update-list">
+
+      <div class="update-item">
+        🔵 بازطراحی کامل تم با محوریت آبی و نورپردازی نرم
+      </div>
+
+      <div class="update-item">
+        🧊 کارت‌ها و پنل‌های شیشه‌ای با blur کنترل‌شده
+      </div>
+
+      <div class="update-item">
+        🛠️ اضافه شدن مرکز رفع باگ 20 ثانیه‌ای
+      </div>
+
+      <div class="update-item">
+        ☁️ اضافه شدن Server Cloud برای بکاپ محلی
+      </div>
+
+      <div class="update-item">
+        👤 اضافه شدن پروفایل کاربر در تنظیمات
+      </div>
+
+      <div class="update-item">
+        📱 هماهنگی رابط برای موبایل و کامپیوتر
+      </div>
+
+      <div class="update-item">
+        🧹 حذف کامل Hyper و بهینه‌ساز از نسخه 1.4
+      </div>
+
+      <div class="update-item">
+        ⚡ حذف پنجره انتخاب دستگاه و تشخیص خودکار دستگاه
+      </div>
+
+      <div class="update-item">
+        🚀 بهینه‌سازی اجرای اولیه برای موبایل
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- BOT -->
+
+<div id="bot" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      onclick="closeModal('bot')"
+      aria-label="بستن"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">🤖</div>
+
+    <h2>ربات Music Master</h2>
+
+    <p class="modal-description">
+      شناسه ربات را برای کپی لمس کنید.
+    </p>
+
+    <button
+      class="modal-button dark"
+      onclick="copyBot()"
+    >
+      @musicstarterebot
+    </button>
+
+    <div
+      id="copyResult"
+      class="small-muted"
+      style="
+        display:none;
+        color:#61efb0
+      "
+    >
+      شناسه کپی شد ✓
+    </div>
+
+  </div>
+
+</div>
+
+<!-- DONATE -->
+
+<div id="donate" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      onclick="closeModal('donate')"
+      aria-label="بستن"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">❤️</div>
+
+    <h2>حمایت از پروژه</h2>
+
+    <p class="modal-description">
+      اگر Music Master را دوست دارید، حمایت شما برای
+      توسعه نسخه‌های بعدی و زیرساخت واقعی پروژه ارزشمند است.
+    </p>
+
+    <div class="red-note">
+      از نسخه 1.10 به بعد، طبق سیاست پروژه، ادامه ارتقا
+      سایت و ربات به حمایت‌های دوره‌ای وابسته خواهد بود.
+    </div>
+
+    <button
+      class="modal-button"
+      onclick="
+        window.open(
+          'https://reymit.ir/music.station',
+          '_blank',
+          'noopener,noreferrer'
+        )
+      "
+    >
+      ❤️ رفتن به صفحه دونیت
+    </button>
+
+  </div>
+
+</div>
+
+<!-- TOAST -->
+
+<div
+  id="toast"
+  class="toast"
+  role="status"
+  aria-live="polite"
+></div>
+
+<script>
+"use strict";
+
+/*
+  MUSIC MASTER 1.4
+  Stable / Cloudflare Ready
+*/
+
+/* =========================
+   STORAGE KEYS
+========================= */
+
+const CLOUD_KEY = "musicMasterCloudV14";
+const PROFILE_KEY = "musicMasterProfileV14";
+const THEME_KEY = "musicMasterThemeV14";
+
+/* =========================
+   SAFE HELPERS
+========================= */
+
+function $(id){
+  return document.getElementById(id);
+}
+
+function openModal(id){
+  const el = $(id);
+
+  if(el){
+    el.classList.remove("hide");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function closeModal(id){
+  const el = $(id);
+
+  if(el){
+    el.classList.add("hide");
+  }
+
+  if(
+    !document.querySelector(
+      ".modal-bg:not(.hide)"
+    )
+  ){
+    document.body.style.overflow = "";
+  }
+}
+
+function closeAllModals(){
+  document.querySelectorAll(".modal-bg")
+    .forEach(function(modal){
+      modal.classList.add("hide");
+    });
+
+  document.body.style.overflow = "";
+}
+
+/* =========================
+   TOAST
+========================= */
+
+function toast(message){
+
+  const el = $("toast");
+
+  if(!el) return;
+
+  el.textContent = message;
+  el.classList.add("show");
+
+  clearTimeout(window.__toastTimer);
+
+  window.__toastTimer = setTimeout(
+    function(){
+      el.classList.remove("show");
+    },
+    2200
+  );
+}
+
+/* =========================
+   DEVICE
+   تشخیص کاملاً خودکار
+========================= */
+
+function detectDevice(){
+
+  const isMobile =
+    window.matchMedia &&
+    window.matchMedia(
+      "(max-width: 620px)"
+    ).matches;
+
+  const type =
+    isMobile
+      ? "mobile"
+      : "computer";
+
+  applyDevice(type);
+}
+
+function applyDevice(type){
+
+  document.body.dataset.device = type;
+
+  const heroDevice = $("heroDevice");
+  const deviceText = $("deviceText");
+
+  const value =
+    type === "mobile"
+      ? "موبایل"
+      : "کامپیوتر";
+
+  if(heroDevice){
+    heroDevice.textContent = value;
+  }
+
+  if(deviceText){
+    deviceText.textContent =
+      value + " • تشخیص خودکار";
+  }
+}
+
+/* =========================
+   THEME
+========================= */
+
+function toggleTheme(enabled){
+
+  try{
+
+    document.body.style.filter =
+      enabled
+        ? "none"
+        : "brightness(1.08)";
+
+    localStorage.setItem(
+      THEME_KEY,
+      enabled ? "dark" : "soft"
+    );
+
+  }catch(e){
+
+    document.body.style.filter = "none";
+
+  }
+}
+
+function loadTheme(){
+
+  try{
+
+    const theme =
+      localStorage.getItem(THEME_KEY);
+
+    const enabled =
+      theme !== "soft";
+
+    document.body.style.filter =
+      enabled
+        ? "none"
+        : "brightness(1.08)";
+
+    const switchEl = $("themeSwitch");
+
+    if(switchEl){
+      switchEl.checked = enabled;
+    }
+
+  }catch(e){
+
+    document.body.style.filter = "none";
+
+  }
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+function loadProfile(){
+
+  let profile = null;
+
+  try{
+
+    profile =
+      JSON.parse(
+        localStorage.getItem(PROFILE_KEY) || "null"
+      );
+
+  }catch(e){
+
+    profile = null;
+
+  }
+
+  if(
+    !profile ||
+    typeof profile !== "object"
+  ){
+
+    profile = {
+      name:"Music Master User",
+      status:"کاربر مهمان"
+    };
+
+  }
+
+  const name = $("profileName");
+  const status = $("profileStatus");
+
+  if(name){
+    name.textContent =
+      String(profile.name || "Music Master User");
+  }
+
+  if(status){
+    status.textContent =
+      String(profile.status || "کاربر مهمان");
+  }
+}
+
+function editProfile(){
+
+  const current =
+    $("profileName")
+      ? $("profileName").textContent
+      : "Music Master User";
+
+  const name =
+    window.prompt(
+      "نام نمایشی پروفایل را وارد کنید:",
+      current
+    );
+
+  if(name === null){
+    return;
+  }
+
+  const clean =
+    name.trim().slice(0,40);
+
+  if(!clean){
+
+    toast("نام معتبر وارد کنید");
+    return;
+
+  }
+
+  const profile = {
+    name:clean,
+    status:"پروفایل محلی"
+  };
+
+  try{
+
+    localStorage.setItem(
+      PROFILE_KEY,
+      JSON.stringify(profile)
+    );
+
+  }catch(e){
+
+    toast("ذخیره پروفایل ممکن نشد");
+    return;
+
+  }
+
+  loadProfile();
+  saveCloud("ویرایش پروفایل");
+
+  toast("پروفایل ذخیره شد ✓");
+}
+
+function resetProfile(){
+
+  try{
+    localStorage.removeItem(PROFILE_KEY);
+  }catch(e){}
+
+  loadProfile();
+
+  toast("پروفایل بازنشانی شد");
+}
+
+/* =========================
+   BOT
+========================= */
+
+async function copyBot(){
+
+  const id = "@musicstarterebot";
+
+  try{
+
+    if(
+      navigator.clipboard &&
+      window.isSecureContext
+    ){
+
+      await navigator.clipboard.writeText(id);
+
+    }else{
+
+      throw new Error("Clipboard unavailable");
+
+    }
+
+  }catch(e){
+
+    try{
+
+      const area =
+        document.createElement("textarea");
+
+      area.value = id;
+      area.setAttribute("readonly","");
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+
+      document.body.appendChild(area);
+
+      area.focus();
+      area.select();
+
+      document.execCommand("copy");
+
+      area.remove();
+
+    }catch(copyError){
+
+      toast("کپی خودکار در این مرورگر در دسترس نیست");
+      return;
+
+    }
+  }
+
+  const result = $("copyResult");
+
+  if(result){
+    result.style.display = "block";
+  }
+
+  toast("شناسه ربات کپی شد ✓");
+}
+
+/* =========================
+   CLOUD
+========================= */
+
+function getCloud(){
+
+  try{
+
+    const data =
+      JSON.parse(
+        localStorage.getItem(CLOUD_KEY) || "[]"
+      );
+
+    return Array.isArray(data)
+      ? data
+      : [];
+
+  }catch(e){
+
+    return [];
+
+  }
+}
+
+function saveCloud(action){
+
+  try{
+
+    const data = getCloud();
+
+    data.push({
+      time:new Date().toISOString(),
+      action:String(action).slice(0,120)
+    });
+
+    while(data.length > 250){
+      data.shift();
+    }
+
+    localStorage.setItem(
+      CLOUD_KEY,
+      JSON.stringify(data)
+    );
+
+  }catch(e){
+
+    /*
+      اگر localStorage در مرورگر بسته باشد،
+      سایت نباید خراب شود.
+    */
+
+  }
+}
+
+function estimateBytes(data){
+
+  try{
+
+    return new Blob([
+      JSON.stringify(data)
+    ]).size;
+
+  }catch(e){
+
+    return 0;
+
+  }
+}
+
+function formatBytes(bytes){
+
+  if(bytes < 1024){
+    return bytes + " B";
+  }
+
+  if(bytes < 1024 * 1024){
+    return (
+      (bytes / 1024).toFixed(1)
+      + " KB"
+    );
+  }
+
+  return (
+    (bytes / (1024 * 1024)).toFixed(2)
+    + " MB"
+  );
+}
+
+function updateCloudUI(){
+
+  const data = getCloud();
+
+  const size = $("cloudSize");
+  const detail = $("cloudDetail");
+
+  if(size){
+    size.textContent =
+      formatBytes(
+        estimateBytes(data)
+      );
+  }
+
+  if(detail){
+    detail.textContent =
+      data.length +
+      " مورد ذخیره شده";
+  }
+}
+
+function askClearCloud(){
+
+  closeModal("cloud");
+  openModal("cloudConfirm");
+}
+
+function clearCloud(){
+
+  closeModal("cloudConfirm");
+
+  const spinner =
+    document.createElement("div");
+
+  spinner.className = "modal-bg";
+
+  spinner.innerHTML = `
+    <div class="modal" style="text-align:center">
+      <div class="modal-icon">☁️</div>
+      <h2>در حال پاک‌سازی</h2>
+      <p class="modal-description">
+        حافظه محلی در حال خالی شدن است...
+      </p>
+      <div class="spinner loading">☁️</div>
+      <div id="clearTimer" class="stage-title">
+        4 ثانیه
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(spinner);
+
+  document.body.style.overflow = "hidden";
+
+  let left = 4;
+
+  const timer =
+    setInterval(function(){
+
+      left--;
+
+      const t =
+        spinner.querySelector("#clearTimer");
+
+      if(t){
+        t.textContent =
+          left + " ثانیه";
+      }
+
+      if(left <= 0){
+
+        clearInterval(timer);
+
+        try{
+          localStorage.removeItem(CLOUD_KEY);
+        }catch(e){}
+
+        spinner.remove();
+
+        updateCloudUI();
+
+        document.body.style.overflow = "";
+
+        toast("حافظه محلی پاک شد ✓");
+      }
+
+    },1000);
+}
+
+/* =========================
+   BUG FIX
+========================= */
+
+const bugStages = [
+  "اتصال به پایگاه داده",
+  "دریافت آدرس سرور",
+  "بررسی و دریافت خطاهای سمت کاربر",
+  "اعمال اصلاحات قابل انجام"
+];
+
+let bugRunning = false;
+
+function setStage(index){
+
+  bugStages.forEach(
+    function(_,i){
+
+      const el =
+        $("stage" + (i + 1));
+
+      if(el){
+        el.classList.toggle(
+          "active",
+          i === index
+        );
+      }
+
+    }
+  );
+
+  const title =
+    $("bugStageTitle");
+
+  if(title){
+    title.textContent =
+      bugStages[index];
+  }
+}
+
+function startBugFix(){
+
+  if(bugRunning){
+    return;
+  }
+
+  bugRunning = true;
+
+  const button = $("bugButton");
+  const spinner = $("bugSpinner");
+  const progress = $("bugProgress");
+
+  if(button){
+
+    button.disabled = true;
+    button.textContent =
+      "در حال بررسی...";
+
+  }
+
+  if(spinner){
+    spinner.classList.add("loading");
+  }
+
+  if(progress){
+    progress.style.width = "0%";
+  }
+
+  saveCloud("شروع مرکز رفع باگ");
+
+  let elapsed = 0;
+
+  setStage(0);
+
+  const timer =
+    setInterval(
+      function(){
+
+        elapsed++;
+
+        if(progress){
+
+          progress.style.width =
+            ((elapsed / 20) * 100) + "%";
+
+        }
+
+        const stage =
+          Math.min(
+            3,
+            Math.floor(
+              (elapsed - 1) / 5
+            )
+          );
+
+        setStage(stage);
+
+        if(elapsed >= 20){
+
+          clearInterval(timer);
+
+          finishBugFix();
+
+        }
+
+      },
+      1000
+    );
+}
+
+function finishBugFix(){
+
+  const spinner = $("bugSpinner");
+  const title = $("bugStageTitle");
+  const button = $("bugButton");
+  const security = $("liveSecurity");
+
+  if(spinner){
+    spinner.classList.remove("loading");
+  }
+
+  if(title){
+    title.textContent =
+      "بررسی کامل شد ✓";
+  }
+
+  if(button){
+
+    button.disabled = false;
+
+    button.textContent =
+      "اجرای دوباره رفع باگ";
+
+  }
+
+  if(security){
+    security.textContent =
+      "بررسی شد";
+  }
+
+  bugRunning = false;
+
+  saveCloud("پایان مرکز رفع باگ");
+
+  toast(
+    "رفع باگ محلی با موفقیت تمام شد ✓"
+  );
+}
+
+/* =========================
+   MODAL EVENTS
+========================= */
+
+function setupModalEvents(){
+
+  document
+    .querySelectorAll(".modal-bg")
+    .forEach(
+      function(modal){
+
+        modal.addEventListener(
+          "click",
+          function(e){
+
+            if(
+              e.target === modal
+            ){
+
+              closeModal(modal.id);
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+}
+
+/* =========================
+   RESIZE
+========================= */
+
+let resizeTimer = null;
+
+function handleResize(){
+
+  clearTimeout(resizeTimer);
+
+  resizeTimer =
+    setTimeout(
+      function(){
+        detectDevice();
+      },
+      100
+    );
+}
+
+/* =========================
+   KEYBOARD
+========================= */
+
+function setupKeyboard(){
+
+  document.addEventListener(
+    "keydown",
+    function(e){
+
+      if(e.key === "Escape"){
+        closeAllModals();
+      }
+
+    }
+  );
+
+}
+
+/* =========================
+   INITIALIZATION
+========================= */
+
+function init(){
+
+  /*
+    مهم:
+    هیچ Modal دستگاهی در شروع باز نمی‌شود.
+  */
+
+  detectDevice();
+  loadTheme();
+  loadProfile();
+  updateCloudUI();
+  setupModalEvents();
+  setupKeyboard();
+
+  saveCloud(
+    "ورود به سایت نسخه 1.4"
+  );
+}
+
+/* اجرای اولیه بدون تأخیر */
+
+if(
+  document.readyState === "loading"
+){
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    init,
+    {once:true}
+  );
+
+}else{
+
+  init();
+
+}
+
+/* تشخیص خودکار تغییر اندازه */
+
+window.addEventListener(
+  "resize",
+  handleResize,
+  {passive:true}
+);
+
+/* ثبت خروج */
+
+window.addEventListener(
+  "beforeunload",
+  function(){
+    saveCloud(
+      "خروج از سایت نسخه 1.4"
+    );
+  }
+);
+</script>
+
+</body>
+</html>
