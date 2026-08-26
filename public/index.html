@@ -2,16 +2,16 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#06152d">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#020611">
 <meta name="color-scheme" content="dark">
-<title>Music Master • v1.4</title>
+<title>Music Master • v1.5</title>
 
 <style>
 *{
   box-sizing:border-box;
   margin:0;
-  padding:0
+  padding:0;
 }
 
 :root{
@@ -23,413 +23,552 @@
   --blue2:#00c8ff;
   --blue3:#4f7dff;
   --red:#ff3b4f;
+  --good:#4ff0a0;
   --card:rgba(7,28,55,.48);
   --border:rgba(107,190,255,.18);
-  --good:#4ff0a0;
 }
 
 html{
   scroll-behavior:smooth;
-  background:#030914;
 }
 
 body{
   min-height:100vh;
-  font-family:Tahoma,Arial,sans-serif;
-  color:var(--text);
   overflow-x:hidden;
+  color:var(--text);
+  font-family:Tahoma,Arial,sans-serif;
   background:
-    radial-gradient(circle at 50% 5%,rgba(0,153,255,.20),transparent 28%),
-    radial-gradient(circle at 10% 90%,rgba(0,91,255,.16),transparent 30%),
+    radial-gradient(circle at 50% 5%,rgba(0,153,255,.24),transparent 28%),
+    radial-gradient(circle at 10% 90%,rgba(0,91,255,.20),transparent 30%),
     linear-gradient(135deg,#020611,#06152d 45%,#020712);
 }
 
-/* سبک‌تر از نسخه قبلی برای رندر بهتر موبایل */
-body:before{
+body::before{
   content:"";
   position:fixed;
   inset:0;
   z-index:-3;
   pointer-events:none;
   background:
-    linear-gradient(135deg,rgba(4,27,58,.68),rgba(2,8,18,.72)),
+    linear-gradient(135deg,rgba(4,27,58,.76),rgba(2,8,18,.76)),
     repeating-linear-gradient(
       60deg,
       transparent 0 70px,
-      rgba(80,160,255,.025) 71px 72px
+      rgba(80,160,255,.035) 71px 72px
     ),
     repeating-linear-gradient(
       -60deg,
       transparent 0 70px,
-      rgba(80,160,255,.025) 71px 72px
+      rgba(80,160,255,.035) 71px 72px
     );
 }
 
-body:after{
+body::after{
   content:"";
   position:fixed;
-  inset:-10%;
+  inset:-15%;
   z-index:-2;
   pointer-events:none;
   background:
     radial-gradient(
       circle at 50% 35%,
-      transparent 0 20%,
-      rgba(0,137,255,.06) 21%,
-      transparent 34%
+      transparent 0 17%,
+      rgba(0,137,255,.09) 18%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 50% 35%,
+      transparent 0 31%,
+      rgba(0,137,255,.06) 32%,
+      transparent 44%
     ),
     linear-gradient(
       90deg,
       transparent 48%,
-      rgba(0,155,255,.05) 50%,
+      rgba(0,155,255,.08) 50%,
       transparent 52%
     );
-  filter:blur(7px);
-  opacity:.75;
+  filter:blur(10px);
+  animation:webGlow 8s ease-in-out infinite alternate;
+}
+
+@keyframes webGlow{
+  to{
+    transform:scale(1.05);
+    opacity:.72;
+  }
+}
+
+@keyframes islandOpen{
+  from{
+    opacity:0;
+    transform:translateX(-50%) translateY(-10px) scale(.92);
+  }
+  to{
+    opacity:1;
+    transform:translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes pulseBlue{
+  0%,100%{
+    box-shadow:
+      0 0 0 0 rgba(0,200,255,.18),
+      0 0 30px rgba(0,120,255,.18);
+  }
+  50%{
+    box-shadow:
+      0 0 0 7px rgba(0,200,255,0),
+      0 0 45px rgba(0,150,255,.30);
+  }
 }
 
 @keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-@keyframes pulse{
-  50%{
-    box-shadow:
-      0 0 0 8px rgba(22,140,255,0),
-      0 0 30px rgba(22,140,255,.35)
+  to{
+    transform:rotate(360deg);
   }
 }
 
-@keyframes borderFlow{
-  0%,100%{
-    box-shadow:0 0 18px rgba(0,154,255,.10)
-  }
-  50%{
-    box-shadow:0 0 28px rgba(0,204,255,.18)
-  }
-}
-
-button,a{
-  font-family:inherit
+button,
+a{
+  font-family:inherit;
 }
 
 button{
-  cursor:pointer
-}
-
-button:disabled{
-  cursor:not-allowed;
-  opacity:.65
+  cursor:pointer;
 }
 
 .page{
   width:min(1180px,calc(100% - 20px));
-  margin:auto
+  margin:auto;
 }
 
-/* NAV */
+/* =====================================================
+   DYNAMIC ISLAND
+===================================================== */
 
-.navbar{
-  position:sticky;
-  top:10px;
-  z-index:100;
-  margin-top:10px;
-  min-height:72px;
-  padding:9px;
+.dynamic-island{
+  position:fixed;
+  top:12px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:1000;
+
+  width:min(650px,calc(100% - 24px));
+  min-height:62px;
+
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:32px;
+
+  background:#000;
+  color:#fff;
+
+  box-shadow:
+    0 18px 60px rgba(0,0,0,.48),
+    0 0 35px rgba(0,110,255,.12);
+
+  overflow:hidden;
+
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+
+  animation:pulseBlue 4s ease-in-out infinite;
+}
+
+.island-main{
+  min-height:62px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:10px;
-  border:1px solid rgba(78,184,255,.22);
-  border-radius:24px;
-  background:rgba(3,17,36,.72);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  box-shadow:0 18px 65px rgba(0,0,0,.35);
-  animation:borderFlow 5s ease-in-out infinite;
+  padding:7px 9px 7px 15px;
 }
 
-.logo{
-  width:52px;
-  height:52px;
-  flex-shrink:0;
-  display:grid;
-  place-items:center;
-  border-radius:18px;
-  background:linear-gradient(145deg,#087eff,#00c8ff);
-  box-shadow:0 0 30px rgba(0,151,255,.35);
-  font-size:24px;
-}
-
-.nav-actions{
+.island-brand{
   display:flex;
   align-items:center;
-  gap:7px;
-  flex-wrap:wrap
+  gap:10px;
+  min-width:0;
 }
 
-.nav-btn{
-  min-width:48px;
-  height:48px;
-  padding:0 14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  border:1px solid rgba(100,190,255,.13);
-  border-radius:16px;
-  background:rgba(255,255,255,.035);
-  color:#dceeff;
+.island-dot{
+  width:9px;
+  height:9px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:var(--good);
+  box-shadow:0 0 13px var(--good);
+}
+
+.island-title{
+  font-size:12px;
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+.island-subtitle{
+  margin-top:3px;
+  color:#68768a;
+  font-size:8px;
+}
+
+.island-menu-button{
+  width:46px;
+  height:46px;
+  flex:0 0 auto;
+
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:50%;
+
+  background:#080808;
+  color:#fff;
+
+  font-size:19px;
+
   transition:.2s;
 }
 
-.nav-btn:hover{
+.island-menu-button:hover{
+  transform:scale(1.05);
+  background:#101010;
+}
+
+.island-panel{
+  display:none;
+  padding:5px 9px 10px;
+}
+
+.dynamic-island.open .island-panel{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:6px;
+}
+
+.island-item{
+  min-width:0;
+  min-height:62px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.055),
+      rgba(255,255,255,.018)
+    );
+
+  color:#dcecff;
+
+  transition:.2s;
+}
+
+.island-item:hover{
   transform:translateY(-2px);
-  background:rgba(30,150,255,.11);
-  border-color:rgba(75,190,255,.35)
+  border-color:rgba(40,180,255,.35);
+  background:rgba(20,140,255,.12);
 }
 
-.nav-btn.red{
-  color:#ff8793
+.island-item .icon{
+  font-size:18px;
 }
 
-.nav-btn.green{
-  color:#66efb0
+.island-item span{
+  font-size:8px;
+  color:#91a3b9;
 }
 
-/* HERO */
+.island-item.red{
+  color:#ff8994;
+}
+
+.island-item.green{
+  color:#66efb0;
+}
+
+/* =====================================================
+   HERO
+===================================================== */
 
 .hero{
   position:relative;
   min-height:455px;
-  margin-top:20px;
+  margin-top:92px;
   padding:45px 22px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   text-align:center;
   overflow:hidden;
+
   border:1px solid var(--border);
   border-radius:30px;
+
   background:
     linear-gradient(
       135deg,
       rgba(4,29,61,.48),
       rgba(3,13,27,.38)
     );
-  backdrop-filter:blur(13px);
-  -webkit-backdrop-filter:blur(13px);
+
+  backdrop-filter:blur(17px);
+  -webkit-backdrop-filter:blur(17px);
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:auto 12% 8% 12%;
+  height:2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--blue2),
+      transparent
+    );
+
+  box-shadow:0 0 25px var(--blue2);
 }
 
 .orb{
   position:absolute;
   border-radius:50%;
-  filter:blur(28px);
-  pointer-events:none
+  filter:blur(35px);
+  pointer-events:none;
 }
 
 .orb.one{
-  width:300px;
-  height:300px;
-  right:-150px;
-  top:-160px;
-  background:rgba(0,151,255,.20)
+  width:340px;
+  height:340px;
+  right:-160px;
+  top:-180px;
+  background:rgba(0,151,255,.24);
 }
 
 .orb.two{
-  width:250px;
-  height:250px;
-  left:-120px;
-  bottom:-150px;
-  background:rgba(32,77,255,.17)
+  width:280px;
+  height:280px;
+  left:-130px;
+  bottom:-160px;
+  background:rgba(32,77,255,.20);
 }
 
 .hero-content{
   position:relative;
   z-index:2;
-  max-width:850px
+  max-width:850px;
 }
 
 .badge{
   display:inline-flex;
-  gap:8px;
   align-items:center;
+  gap:8px;
+
   margin-bottom:20px;
   padding:9px 16px;
+
   border:1px solid rgba(95,194,255,.16);
   border-radius:999px;
+
   background:rgba(255,255,255,.035);
   color:#75caff;
-  font-size:11px
+
+  font-size:11px;
 }
 
 .hero h1{
+  margin-bottom:18px;
   font-size:clamp(38px,6vw,64px);
   line-height:1.35;
-  margin-bottom:18px
 }
 
 .gradient{
-  background:linear-gradient(
-    90deg,
-    #dceeff,
-    #28b7ff,
-    #4d7dff
-  );
+  background:
+    linear-gradient(
+      90deg,
+      #dceeff,
+      #28b7ff,
+      #4d7dff
+    );
+
   -webkit-background-clip:text;
   background-clip:text;
-  color:transparent
+  color:transparent;
 }
 
 .hero p{
   max-width:740px;
   margin:auto;
+
   color:#9db0c8;
   line-height:2.15;
-  font-size:14px
+  font-size:14px;
 }
 
 .status{
   margin-top:24px;
+
   display:flex;
   justify-content:center;
   flex-wrap:wrap;
-  gap:8px
+  gap:8px;
 }
 
 .pill{
   padding:9px 13px;
+
   border:1px solid rgba(95,190,255,.13);
   border-radius:999px;
+
   background:rgba(255,255,255,.03);
+
   color:#9fb1c8;
-  font-size:10px
+  font-size:10px;
 }
 
 .pill strong{
-  color:#61eeb0
+  color:#61eeb0;
 }
 
-/* SECTIONS */
+/* =====================================================
+   SECTIONS
+===================================================== */
 
 .section{
-  margin-top:23px
+  margin-top:23px;
 }
 
 .section-title{
-  margin-bottom:14px
+  margin-bottom:14px;
 }
 
 .section-title small{
   display:block;
   margin-bottom:6px;
+
   color:#51bfff;
   font-size:10px;
   font-weight:bold;
-  letter-spacing:1px
+  letter-spacing:1px;
 }
 
 .section-title h2{
-  font-size:24px
+  font-size:24px;
 }
 
 .section-title p{
   margin-top:7px;
+
   color:#879bb6;
   font-size:12px;
-  line-height:1.9
+  line-height:1.9;
 }
-
-/* LIVE */
 
 .live-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:10px
+  gap:10px;
+}
+
+.live-card,
+.feature,
+.about-box,
+.donate,
+footer{
+  border:1px solid var(--border);
+  background:var(--card);
+
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
 }
 
 .live-card{
   padding:18px;
   border-radius:20px;
-  border:1px solid var(--border);
-  background:var(--card);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  transition:.2s
+  transition:.25s;
 }
 
-.live-card:hover{
-  transform:translateY(-3px);
-  border-color:rgba(65,185,255,.34)
+.live-card:hover,
+.feature:hover{
+  transform:translateY(-4px);
+  border-color:rgba(65,185,255,.34);
 }
 
 .live-top{
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin-bottom:13px
+  justify-content:space-between;
+  margin-bottom:13px;
 }
 
 .live-icon{
   width:42px;
   height:42px;
+
   display:grid;
   place-items:center;
+
   border-radius:50%;
+
   background:rgba(20,142,255,.12);
-  box-shadow:0 0 20px rgba(20,142,255,.12)
+  box-shadow:0 0 20px rgba(20,142,255,.12);
 }
 
 .dot{
   width:8px;
   height:8px;
+
   border-radius:50%;
+
   background:var(--good);
-  box-shadow:0 0 11px var(--good)
+  box-shadow:0 0 11px var(--good);
 }
 
 .live-card strong{
   display:block;
   margin-bottom:5px;
-  font-size:12px
+  font-size:12px;
 }
 
 .live-card span{
   color:#7f93ae;
-  font-size:10px
+  font-size:10px;
 }
-
-/* FEATURES */
 
 .features{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:12px
+  gap:12px;
 }
 
 .feature{
   min-height:205px;
   padding:23px;
   border-radius:23px;
-  border:1px solid var(--border);
-  background:var(--card);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  transition:.2s
-}
-
-.feature:hover{
-  transform:translateY(-4px);
-  border-color:rgba(65,185,255,.34)
+  transition:.25s;
 }
 
 .feature-icon{
   width:54px;
   height:54px;
+
   display:grid;
   place-items:center;
+
   margin-bottom:17px;
+
   border-radius:50%;
+
   background:
     radial-gradient(
       circle at 35% 30%,
@@ -437,167 +576,220 @@ button:disabled{
       #0879ef 60%,
       #0747a8
     );
+
   box-shadow:0 0 25px rgba(0,144,255,.25);
-  font-size:23px
+
+  font-size:23px;
 }
 
 .feature h3{
   margin-bottom:8px;
-  font-size:18px
+  font-size:18px;
 }
 
 .feature p{
   color:#879bb4;
   line-height:2;
-  font-size:12px
+  font-size:12px;
 }
-
-/* ABOUT */
 
 .about-box{
   padding:25px;
   border-radius:24px;
-  border:1px solid var(--border);
-  background:var(--card);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px)
 }
 
 .about-box p{
+  margin-bottom:13px;
+
   color:#899db6;
   font-size:12px;
   line-height:2.2;
-  margin-bottom:13px
 }
 
 .about-box p:last-child{
-  margin-bottom:0
+  margin-bottom:0;
 }
 
-/* DONATE */
+/* =====================================================
+   DONATE
+===================================================== */
 
 .donate{
   padding:27px;
+
   display:flex;
   align-items:center;
   justify-content:space-between;
+
   gap:25px;
+
   border-radius:25px;
-  border:1px solid var(--border);
-  background:var(--card);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px)
 }
 
 .donate-left{
   display:flex;
   align-items:center;
-  gap:17px
+  gap:17px;
 }
 
 .donate-icon{
   width:58px;
   height:58px;
+
   display:grid;
   place-items:center;
+
+  flex:0 0 auto;
+
   border-radius:50%;
-  background:linear-gradient(145deg,#ff4b61,#087fff);
+
+  background:
+    linear-gradient(
+      145deg,
+      #ff4b61,
+      #087fff
+    );
+
   box-shadow:0 0 28px rgba(255,59,79,.22);
-  font-size:25px
+
+  font-size:25px;
 }
 
 .donate h2{
+  margin-bottom:7px;
   font-size:19px;
-  margin-bottom:7px
 }
 
 .donate p{
   color:#879bb4;
   font-size:12px;
-  line-height:1.8
+  line-height:1.8;
 }
 
 .donate-button{
   min-height:46px;
   padding:0 18px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   border-radius:14px;
+
   background:#e9f7ff;
   color:#07111e;
+
   font-size:12px;
   font-weight:bold;
-  text-decoration:none
+
+  text-decoration:none;
 }
 
-/* FOOTER */
+/* =====================================================
+   FOOTER
+===================================================== */
 
 footer{
   margin:20px 0 30px;
   padding:20px;
+
   text-align:center;
+
   border-radius:20px;
-  border:1px solid var(--border);
-  background:var(--card);
+
   color:#70859f;
   font-size:11px;
-  line-height:2
+  line-height:2;
 }
 
-/* MODALS */
+/* =====================================================
+   MODAL
+===================================================== */
 
 .modal-bg{
   position:fixed;
   inset:0;
-  z-index:500;
+
+  z-index:2000;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   padding:16px;
+
   background:rgba(0,5,14,.72);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px)
+
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
 }
 
 .modal-bg.hide{
-  display:none
+  display:none;
 }
 
 .modal{
   position:relative;
+
   width:min(650px,100%);
   max-height:90vh;
+
   overflow:auto;
+
   padding:32px 24px 24px;
+
   border:1px solid rgba(90,190,255,.22);
   border-radius:29px;
+
   background:rgba(5,20,40,.96);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  box-shadow:0 30px 100px rgba(0,0,0,.55)
+
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
+
+  box-shadow:0 30px 100px rgba(0,0,0,.55);
+
+  animation:showModal .22s ease;
+}
+
+@keyframes showModal{
+  from{
+    opacity:0;
+    transform:translateY(12px) scale(.98);
+  }
+  to{
+    opacity:1;
+    transform:none;
+  }
 }
 
 .close{
   position:absolute;
   top:11px;
   left:11px;
+
   width:36px;
   height:36px;
+
   border:1px solid rgba(100,190,255,.14);
   border-radius:50%;
+
   background:rgba(255,255,255,.05);
   color:inherit;
-  font-size:19px
+
+  font-size:19px;
 }
 
 .modal-icon{
   width:66px;
   height:66px;
+
   display:grid;
   place-items:center;
+
   margin:0 auto 15px;
+
   border-radius:50%;
+
   background:
     radial-gradient(
       circle at 35% 30%,
@@ -605,484 +797,628 @@ footer{
       #087fff 60%,
       #063d9b
     );
+
   box-shadow:0 0 32px rgba(0,151,255,.25);
-  font-size:28px
+
+  font-size:28px;
 }
 
 .modal h2{
-  text-align:center;
   margin-bottom:10px;
-  font-size:22px
+  text-align:center;
+  font-size:22px;
 }
 
 .modal-description{
   text-align:center;
+
   color:#8fa3bd;
   line-height:2;
-  font-size:12px
+  font-size:12px;
 }
 
 .modal-button{
   width:100%;
   min-height:49px;
+
   margin-top:15px;
+
   border:0;
   border-radius:15px;
-  background:linear-gradient(135deg,#168cff,#00c8ff);
+
+  background:
+    linear-gradient(
+      135deg,
+      #168cff,
+      #00c8ff
+    );
+
   color:#03101d;
-  font-weight:bold
+  font-weight:bold;
 }
 
 .modal-button.red{
-  background:linear-gradient(135deg,#ff4659,#ff7b88);
-  color:#fff
+  background:
+    linear-gradient(
+      135deg,
+      #ff4659,
+      #ff7b88
+    );
+
+  color:#fff;
 }
 
 .modal-button.dark{
   background:rgba(255,255,255,.07);
   color:#dcecff;
-  border:1px solid rgba(100,190,255,.15)
+  border:1px solid rgba(100,190,255,.15);
 }
 
-/* LISTS */
+/* =====================================================
+   COMMON MODAL ITEMS
+===================================================== */
 
-.panel-list,
-.update-list{
+.update-list,
+.panel-list{
   display:grid;
   gap:9px;
-  margin-top:20px
+  margin-top:20px;
 }
 
-.panel-row,
 .update-item,
+.panel-row,
 .setting-row,
 .cloud-stat,
 .profile-card{
   padding:15px;
+
   border:1px solid rgba(100,190,255,.12);
   border-radius:17px;
-  background:rgba(255,255,255,.03)
+
+  background:rgba(255,255,255,.03);
+}
+
+.update-item{
+  color:#9caec4;
+  font-size:11px;
+  line-height:1.8;
+}
+
+.update-version{
+  width:max-content;
+
+  margin:0 auto 16px;
+
+  padding:7px 12px;
+
+  border-radius:999px;
+
+  color:#7acfff;
+
+  background:rgba(22,140,255,.08);
+
+  border:1px solid rgba(22,140,255,.16);
+
+  font-size:10px;
+  font-weight:bold;
 }
 
 .panel-row{
   display:flex;
   align-items:center;
-  justify-content:space-between
+  justify-content:space-between;
 }
 
 .panel-left{
   display:flex;
   align-items:center;
   gap:10px;
+
   color:#aabbd0;
-  font-size:12px
+  font-size:12px;
 }
 
 .panel-value{
   color:#62efb0;
-  font-size:11px
-}
-
-.update-version{
-  width:max-content;
-  margin:0 auto 16px;
-  padding:7px 12px;
-  border-radius:999px;
-  color:#7acfff;
-  background:rgba(22,140,255,.08);
-  border:1px solid rgba(22,140,255,.16);
-  font-size:10px;
-  font-weight:bold
-}
-
-.update-item{
-  color:#9caec4;
   font-size:11px;
-  line-height:1.8
-}
-
-/* SETTINGS */
-
-.setting-row{
-  margin-top:11px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px
-}
-
-.setting-info strong{
-  display:block;
-  margin-bottom:5px;
-  font-size:12px
-}
-
-.setting-info span{
-  color:#7e93ad;
-  font-size:10px
-}
-
-.switch{
-  position:relative;
-  width:48px;
-  height:27px;
-  flex-shrink:0
-}
-
-.switch input{
-  display:none
-}
-
-.slider{
-  position:absolute;
-  inset:0;
-  border-radius:999px;
-  background:rgba(255,255,255,.12)
-}
-
-.slider:before{
-  content:"";
-  position:absolute;
-  width:21px;
-  height:21px;
-  top:3px;
-  right:3px;
-  border-radius:50%;
-  background:#fff;
-  transition:.25s
-}
-
-.switch input:checked+.slider{
-  background:linear-gradient(90deg,#087fff,#00c8ff)
-}
-
-.switch input:checked+.slider:before{
-  transform:translateX(-21px)
 }
 
 .red-note{
   margin-top:15px;
   padding:14px;
+
   border:1px solid rgba(255,59,79,.25);
   border-radius:15px;
+
   background:rgba(255,59,79,.07);
+
   color:#ff8994;
+
   font-size:10px;
   line-height:2;
-  text-align:center
+  text-align:center;
 }
 
-/* PROFILE */
+/* =====================================================
+   PROFILE
+===================================================== */
 
 .profile-card{
+  margin-top:18px;
   text-align:center;
-  margin-top:18px
 }
 
 .profile-avatar{
   width:76px;
   height:76px;
-  margin:0 auto 12px;
+
   display:grid;
   place-items:center;
+
+  margin:0 auto 12px;
+
   border-radius:50%;
-  background:linear-gradient(145deg,#168cff,#00c8ff);
+
+  background:
+    linear-gradient(
+      145deg,
+      #168cff,
+      #00c8ff
+    );
+
   box-shadow:0 0 30px rgba(0,151,255,.3);
-  font-size:32px
+
+  font-size:32px;
 }
 
 .profile-card strong{
   display:block;
+  margin-bottom:5px;
   font-size:15px;
-  margin-bottom:5px
 }
 
 .profile-card span{
   color:#7f94ae;
-  font-size:10px
+  font-size:10px;
 }
 
 .profile-actions{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:9px;
-  margin-top:12px
+  margin-top:12px;
 }
 
 .profile-actions button{
   min-height:43px;
+
   border:1px solid rgba(100,190,255,.13);
   border-radius:13px;
+
   background:rgba(255,255,255,.04);
-  color:#dcecff
+  color:#dcecff;
 }
 
-/* BUG FIX */
+/* =====================================================
+   SWITCH
+===================================================== */
 
-.stage-box{
+.setting-row{
+  margin-top:11px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:15px;
+}
+
+.setting-info strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:12px;
+}
+
+.setting-info span{
+  color:#7e93ad;
+  font-size:10px;
+}
+
+.switch{
+  position:relative;
+
+  width:48px;
+  height:27px;
+
+  flex-shrink:0;
+}
+
+.switch input{
+  display:none;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.12);
+}
+
+.slider::before{
+  content:"";
+
+  position:absolute;
+
+  width:21px;
+  height:21px;
+
+  top:3px;
+  right:3px;
+
+  border-radius:50%;
+
+  background:#fff;
+
+  transition:.25s;
+}
+
+.switch input:checked+.slider{
+  background:
+    linear-gradient(
+      90deg,
+      #087fff,
+      #00c8ff
+    );
+}
+
+.switch input:checked+.slider::before{
+  transform:translateX(-21px);
+}
+
+/* =====================================================
+   BUG FIX
+===================================================== */
+
+.bug-status{
   margin-top:20px;
-  text-align:center
+
+  padding:15px;
+
+  border:1px solid rgba(100,190,255,.12);
+  border-radius:17px;
+
+  background:rgba(255,255,255,.025);
+
+  text-align:center;
 }
 
-.spinner{
-  width:92px;
-  height:92px;
-  margin:20px auto;
+.bug-icon{
+  width:86px;
+  height:86px;
+
   display:grid;
   place-items:center;
+
+  margin:0 auto 14px;
+
   border-radius:50%;
+
   border:5px solid rgba(255,255,255,.07);
+
   border-top-color:#168cff;
   border-right-color:#00c8ff;
-  font-size:28px
+
+  font-size:28px;
 }
 
-.spinner.loading{
-  animation:spin .8s linear infinite
+.bug-icon.loading{
+  animation:spin .8s linear infinite;
 }
 
-.stage-title{
+.bug-title{
+  color:#dcecff;
   font-size:13px;
-  color:#dcecff
 }
 
 .progress{
   height:8px;
+
   margin-top:15px;
+
   border-radius:999px;
+
   background:rgba(255,255,255,.07);
-  overflow:hidden
+
+  overflow:hidden;
 }
 
 .progress-bar{
-  height:100%;
   width:0;
-  background:linear-gradient(90deg,#087fff,#00c8ff);
-  transition:width .25s
+  height:100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #087fff,
+      #00c8ff
+    );
+
+  transition:width .25s;
 }
 
-.stage-list{
+.check-list{
   display:grid;
   gap:7px;
   margin-top:15px;
-  text-align:right
+  text-align:right;
 }
 
-.stage-list div{
+.check-item{
   padding:10px;
+
   border-radius:12px;
+
   background:rgba(255,255,255,.025);
+
   color:#7187a2;
-  font-size:10px
+
+  font-size:10px;
 }
 
-.stage-list .active{
+.check-item.active{
   color:#69d8ff;
+
   border:1px solid rgba(0,185,255,.16);
-  background:rgba(0,145,255,.06)
+
+  background:rgba(0,145,255,.06);
 }
 
-/* CLOUD */
+.check-item.done{
+  color:#61efb0;
+}
+
+.small-muted{
+  margin-top:10px;
+
+  color:#7087a2;
+
+  font-size:10px;
+  line-height:1.9;
+  text-align:center;
+}
+
+/* =====================================================
+   CLOUD
+===================================================== */
 
 .cloud-stat{
+  margin-top:18px;
   text-align:center;
-  margin-top:18px
 }
 
 .cloud-number{
-  font-size:27px;
+  margin:7px 0;
+
   color:#69d8ff;
-  margin:7px 0
+
+  font-size:27px;
 }
 
 .cloud-detail{
   color:#7f94ad;
   font-size:10px;
-  line-height:2
+  line-height:2;
 }
 
-/* CONFIRM */
+/* =====================================================
+   CONFIRM
+===================================================== */
 
 .confirm{
   display:grid;
   grid-template-columns:1fr 1fr;
+
   gap:9px;
-  margin-top:14px
+
+  margin-top:14px;
 }
 
 .confirm button{
   min-height:45px;
+
   border:0;
-  border-radius:13px
+  border-radius:13px;
 }
 
 .confirm .yes{
-  background:linear-gradient(135deg,#ff4659,#ff7b88);
-  color:#fff
+  background:
+    linear-gradient(
+      135deg,
+      #ff4659,
+      #ff7b88
+    );
+
+  color:#fff;
 }
 
 .confirm .no{
   background:rgba(255,255,255,.07);
   color:#dcecff;
-  border:1px solid rgba(100,190,255,.13)
+
+  border:1px solid rgba(100,190,255,.13);
 }
 
-/* TOAST */
+/* =====================================================
+   TOAST
+===================================================== */
 
 .toast{
   position:fixed;
+
   left:50%;
   bottom:22px;
-  z-index:1000;
-  transform:translateX(-50%) translateY(20px);
+
+  z-index:5000;
+
+  transform:
+    translateX(-50%)
+    translateY(20px);
+
   padding:12px 18px;
+
   border-radius:999px;
+
   background:rgba(4,22,43,.94);
+
   border:1px solid rgba(80,190,255,.22);
+
   color:#dff5ff;
+
   font-size:11px;
+
   opacity:0;
   pointer-events:none;
-  transition:.25s
+
+  transition:.25s;
 }
 
 .toast.show{
   opacity:1;
-  transform:translateX(-50%) translateY(0)
+
+  transform:
+    translateX(-50%)
+    translateY(0);
 }
 
-.small-muted{
-  margin-top:10px;
-  color:#7087a2;
-  font-size:10px;
-  text-align:center;
-  line-height:1.9
-}
-
-/* MOBILE */
+/* =====================================================
+   RESPONSIVE
+===================================================== */
 
 @media(max-width:900px){
 
   .features{
-    grid-template-columns:1fr
+    grid-template-columns:1fr;
   }
 
   .live-grid{
-    grid-template-columns:1fr 1fr
+    grid-template-columns:repeat(2,1fr);
   }
 
-}
-
-@media(max-width:780px){
-
-  .navbar{
-    min-height:62px
+  .dynamic-island.open .island-panel{
+    grid-template-columns:repeat(3,1fr);
   }
-
-  .nav-actions{
-    justify-content:flex-end;
-    gap:5px
-  }
-
-  .nav-btn{
-    width:43px;
-    min-width:43px;
-    height:43px;
-    padding:0;
-    border-radius:50%
-  }
-
-  .nav-btn span{
-    display:none
-  }
-
-  .hero{
-    min-height:430px;
-    border-radius:26px
-  }
-
-  .hero h1{
-    font-size:38px
-  }
-
-  .donate{
-    flex-direction:column;
-    align-items:flex-start
-  }
-
-  .donate-button{
-    width:100%
-  }
-
 }
 
 @media(max-width:620px){
 
   .page{
-    width:calc(100% - 12px)
+    width:calc(100% - 12px);
   }
 
-  .navbar{
-    top:6px;
-    margin-top:6px;
-    padding:7px;
-    border-radius:20px
+  .dynamic-island{
+    top:7px;
+
+    width:calc(100% - 16px);
+
+    border-radius:27px;
   }
 
-  .logo{
-    width:44px;
-    height:44px;
-    border-radius:14px
+  .island-main{
+    min-height:54px;
   }
 
-  .nav-actions{
-    display:grid;
-    grid-template-columns:repeat(6,minmax(0,1fr));
-    gap:4px;
-    flex:1
+  .island-menu-button{
+    width:40px;
+    height:40px;
   }
 
-  .nav-btn{
-    width:100%;
-    min-width:0;
-    height:42px;
-    padding:0;
-    border-radius:13px
+  .island-title{
+    font-size:11px;
   }
 
-  .nav-btn span{
-    display:none
+  .dynamic-island.open .island-panel{
+    grid-template-columns:repeat(3,1fr);
+    gap:5px;
+  }
+
+  .island-item{
+    min-height:58px;
+    border-radius:15px;
+  }
+
+  .island-item .icon{
+    font-size:16px;
+  }
+
+  .island-item span{
+    font-size:7px;
   }
 
   .hero{
     min-height:390px;
-    padding:35px 16px
+
+    margin-top:75px;
+
+    padding:35px 16px;
+
+    border-radius:26px;
   }
 
   .hero h1{
-    font-size:clamp(30px,9vw,40px)
+    font-size:clamp(30px,9vw,40px);
   }
 
   .hero p{
     font-size:12px;
-    line-height:2
+    line-height:2;
   }
 
   .features,
   .live-grid{
-    grid-template-columns:1fr
+    grid-template-columns:1fr;
   }
 
   .donate{
-    padding:20px
+    flex-direction:column;
+    align-items:flex-start;
+
+    padding:20px;
+  }
+
+  .donate-button{
+    width:100%;
   }
 
   .modal{
     width:100%;
     max-height:calc(100vh - 24px);
-    border-radius:23px
+    border-radius:23px;
+  }
+}
+
+@media(max-width:420px){
+
+  .island-brand{
+    gap:7px;
   }
 
+  .island-subtitle{
+    display:none;
+  }
+
+  .island-item{
+    min-height:55px;
+  }
+
+  .hero h1{
+    font-size:32px;
+  }
+
+  .profile-actions{
+    grid-template-columns:1fr;
+  }
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -1090,21 +1426,9 @@ footer{
   *,
   *::before,
   *::after{
-    animation-duration:.001ms!important;
-    animation-iteration-count:1!important;
-    scroll-behavior:auto!important
-  }
-
-}
-
-/* دستگاه فقط به صورت خودکار */
-body[data-device="mobile"] .hero{
-  min-height:390px
-}
-
-@media(min-width:621px){
-  body[data-device="mobile"] .hero{
-    min-height:430px
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    scroll-behavior:auto !important;
   }
 }
 </style>
@@ -1112,73 +1436,105 @@ body[data-device="mobile"] .hero{
 
 <body>
 
-<div class="page">
+<!-- =====================================================
+     DYNAMIC ISLAND
+===================================================== -->
 
-<header class="navbar">
+<div id="dynamicIsland" class="dynamic-island">
 
-  <div class="logo">🎵</div>
+  <div class="island-main">
 
-  <div class="nav-actions">
+    <div class="island-brand">
+      <div class="island-dot"></div>
 
-    <button
-      class="nav-btn red"
-      onclick="openModal('bugfix')"
-      title="رفع باگ"
-      aria-label="رفع باگ"
-    >
-      🛠️ <span>رفع باگ</span>
-    </button>
+      <div>
+        <div class="island-title">
+          Music Master
+        </div>
 
-    <button
-      class="nav-btn green"
-      onclick="openModal('cloud');updateCloudUI()"
-      title="Server Cloud"
-      aria-label="Server Cloud"
-    >
-      ☁️ <span>Server Cloud</span>
-    </button>
+        <div class="island-subtitle">
+          Version 1.5 • Online
+        </div>
+      </div>
+    </div>
 
     <button
-      class="nav-btn"
-      onclick="openModal('donate')"
-      title="حمایت"
-      aria-label="حمایت"
+      id="islandToggle"
+      class="island-menu-button"
+      type="button"
+      aria-label="باز کردن منو"
+      aria-expanded="false"
     >
-      ❤️ <span>حمایت</span>
-    </button>
-
-    <button
-      class="nav-btn"
-      onclick="openModal('settings')"
-      title="تنظیمات"
-      aria-label="تنظیمات"
-    >
-      ⚙️ <span>تنظیمات</span>
-    </button>
-
-    <button
-      class="nav-btn"
-      onclick="openModal('updates')"
-      title="آپدیت"
-      aria-label="آپدیت"
-    >
-      ⚡ <span>آپدیت</span>
-    </button>
-
-    <button
-      class="nav-btn"
-      onclick="openModal('bot')"
-      title="ربات"
-      aria-label="ربات"
-    >
-      🤖 <span>ربات</span>
+      ☰
     </button>
 
   </div>
 
-</header>
+  <div class="island-panel">
 
-<!-- HERO -->
+    <button
+      class="island-item"
+      type="button"
+      onclick="openModal('settings')"
+    >
+      <div class="icon">⚙️</div>
+      <span>تنظیمات</span>
+    </button>
+
+    <button
+      class="island-item red"
+      type="button"
+      onclick="openModal('donate')"
+    >
+      <div class="icon">❤️</div>
+      <span>حمایت</span>
+    </button>
+
+    <button
+      class="island-item"
+      type="button"
+      onclick="openModal('bot')"
+    >
+      <div class="icon">🤖</div>
+      <span>ربات</span>
+    </button>
+
+    <button
+      class="island-item"
+      type="button"
+      onclick="openModal('updates')"
+    >
+      <div class="icon">⚡</div>
+      <span>آپدیت</span>
+    </button>
+
+    <button
+      class="island-item green"
+      type="button"
+      onclick="openModal('cloud');updateCloudUI()"
+    >
+      <div class="icon">☁️</div>
+      <span>Cloud</span>
+    </button>
+
+    <button
+      class="island-item red"
+      type="button"
+      onclick="openModal('bugfix')"
+    >
+      <div class="icon">🛠️</div>
+      <span>رفع باگ</span>
+    </button>
+
+  </div>
+</div>
+
+
+<div class="page">
+
+<!-- =====================================================
+     HERO
+===================================================== -->
 
 <section class="hero">
 
@@ -1188,26 +1544,30 @@ body[data-device="mobile"] .hero{
   <div class="hero-content">
 
     <div class="badge">
-      🎵 MUSIC MASTER • VERSION 1.4
+      MUSIC MASTER • VERSION 1.5
     </div>
 
     <h1>
-      موسیقی را<br>
-      <span class="gradient">جور دیگری تجربه کن</span>
+      موسیقی را
+      <br>
+      <span class="gradient">
+        جور دیگری تجربه کن
+      </span>
     </h1>
 
     <p>
-      نسخه 1.4 با تمرکز جدی روی کیفیت رابط کاربری،
-      نورپردازی آبی، شیشه‌ای بودن پنل‌ها،
-      انیمیشن‌های نرم، هماهنگی موبایل و کامپیوتر
-      و ابزارهای مدیریتی جدید طراحی شده است.
+      نسخه 1.5 با رابط آبی شیشه‌ای، Dynamic Island،
+      مدیریت محلی اطلاعات و سیستم بررسی سلامت سمت کاربر
+      برای موبایل و کامپیوتر طراحی شده است.
     </p>
 
     <div class="status">
 
       <div class="pill">
         دستگاه:
-        <strong id="heroDevice">خودکار</strong>
+        <strong id="heroDevice">
+          خودکار
+        </strong>
       </div>
 
       <div class="pill">
@@ -1217,124 +1577,181 @@ body[data-device="mobile"] .hero{
 
       <div class="pill">
         نسخه:
-        <strong>1.4</strong>
+        <strong>1.5</strong>
       </div>
 
     </div>
 
   </div>
-
 </section>
 
-<!-- LIVE STATUS -->
+
+<!-- =====================================================
+     LIVE
+===================================================== -->
 
 <section class="section">
 
   <div class="section-title">
+
     <small>LIVE STATUS</small>
-    <h2>وضعیت زنده</h2>
+
+    <h2>
+      وضعیت زنده
+    </h2>
+
     <p>
-      نمایش وضعیت فعلی اجزای اصلی رابط Music Master
+      وضعیت اجزای اصلی رابط Music Master
     </p>
+
   </div>
+
 
   <div class="live-grid">
 
     <div class="live-card">
+
       <div class="live-top">
         <div class="live-icon">🌐</div>
         <div class="dot"></div>
       </div>
+
       <strong>سایت</strong>
-      <span>Online</span>
+
+      <span>
+        Online
+      </span>
+
     </div>
 
+
     <div class="live-card">
+
       <div class="live-top">
         <div class="live-icon">🤖</div>
         <div class="dot"></div>
       </div>
+
       <strong>ربات</strong>
-      <span>Online</span>
+
+      <span>
+        Online
+      </span>
+
     </div>
 
+
     <div class="live-card">
+
       <div class="live-top">
         <div class="live-icon">🛰️</div>
         <div class="dot"></div>
       </div>
+
       <strong>سرور</strong>
-      <span id="liveServer">متصل</span>
+
+      <span id="liveServer">
+        متصل
+      </span>
+
     </div>
 
+
     <div class="live-card">
+
       <div class="live-top">
         <div class="live-icon">🛡️</div>
         <div class="dot"></div>
       </div>
-      <strong>بررسی محلی</strong>
-      <span id="liveSecurity">پایدار</span>
+
+      <strong>
+        بررسی محلی
+      </strong>
+
+      <span id="liveSecurity">
+        آماده
+      </span>
+
     </div>
 
   </div>
 
 </section>
 
-<!-- FEATURES -->
+
+<!-- =====================================================
+     FEATURES
+===================================================== -->
 
 <section class="section">
 
   <div class="section-title">
-    <small>MUSIC MASTER 1.4</small>
-    <h2>قابلیت‌های اصلی</h2>
+
+    <small>MUSIC MASTER 1.5</small>
+
+    <h2>
+      قابلیت‌های اصلی
+    </h2>
+
     <p>
-      نسخه‌ای با تمرکز بیشتر روی ظاهر، کنترل،
-      نگهداری داده‌های محلی و رفع خطا.
+      ظاهر مدرن، کنترل ساده و عملکرد پایدار.
     </p>
+
   </div>
+
 
   <div class="features">
 
     <article class="feature">
 
-      <div class="feature-icon">🛡️</div>
+      <div class="feature-icon">
+        🏝️
+      </div>
 
-      <h3>Bug Fix Center</h3>
+      <h3>
+        Dynamic Island
+      </h3>
 
       <p>
-        یک روند مرحله‌ای برای بررسی وضعیت رابط،
-        ذخیره‌سازی محلی، نسخه و چند کنترل سلامت
-        سمت کاربر. این بخش در فرانت‌اند شبیه‌سازی
-        شده و جای بررسی امنیت واقعی سرور را نمی‌گیرد.
+        تمام ابزارهای مدیریتی سایت در یک Dynamic Island
+        جمع شده‌اند تا رابط روی موبایل و کامپیوتر خلوت‌تر
+        و حرفه‌ای‌تر باشد.
       </p>
 
     </article>
 
+
     <article class="feature">
 
-      <div class="feature-icon">☁️</div>
+      <div class="feature-icon">
+        🛡️
+      </div>
 
-      <h3>Server Cloud</h3>
+      <h3>
+        Local Bug Center
+      </h3>
 
       <p>
-        ثبت فعالیت‌های قابل ذخیره در مرورگر با
-        localStorage، نمایش حجم تقریبی داده و امکان
-        پاک‌سازی کامل با تأیید دو مرحله‌ای.
-        برای Cloud واقعی باید API و سرور به پروژه متصل شود.
+        بررسی واقعی وضعیت JavaScript، localStorage،
+        نسخه مرورگر، اتصال و فضای ذخیره‌سازی محلی.
       </p>
 
     </article>
 
+
     <article class="feature">
 
-      <div class="feature-icon">✨</div>
+      <div class="feature-icon">
+        ☁️
+      </div>
 
-      <h3>Blue Glass UI</h3>
+      <h3>
+        Server Cloud
+      </h3>
 
       <p>
-        رابط آبی، شیشه‌ای و نورانی با پس‌زمینه تاریک،
-        در کنار انیمیشن‌های سبک تا ظاهر جذاب بماند
-        بدون اینکه افکت‌ها بیش از حد سنگین شوند.
+        فعالیت‌های قابل ذخیره در مرورگر با localStorage
+        نگهداری می‌شوند و حجم تقریبی آن‌ها قابل مشاهده است.
       </p>
 
     </article>
@@ -1343,58 +1760,56 @@ body[data-device="mobile"] .hero{
 
 </section>
 
-<!-- ABOUT -->
+
+<!-- =====================================================
+     ABOUT
+===================================================== -->
 
 <section class="section">
 
   <div class="section-title">
+
     <small>ABOUT</small>
-    <h2>درباره نسخه 1.4</h2>
+
+    <h2>
+      درباره نسخه 1.5
+    </h2>
+
   </div>
+
 
   <div class="about-box">
 
     <p>
-      Music Master 1.4 یک بازطراحی گسترده برای رسیدن
-      به ظاهر یکپارچه‌تر در موبایل و کامپیوتر است.
-      رنگ اصلی رابط به آبی عمیق و آبی روشن منتقل شده
-      و کارت‌ها با شفافیت و blur کنترل‌شده ساخته شده‌اند.
+      Music Master 1.5 با تمرکز روی یک رابط کاربری
+      سبک‌تر و پایدارتر ساخته شده است.
     </p>
 
     <p>
-      در این نسخه Hyper و بهینه‌ساز حذف شده‌اند تا
-      معماری رابط ساده‌تر و قابل کنترل‌تر باشد.
-      تمرکز روی کیفیت پایه سایت، انیمیشن‌های نرم،
-      آیکون‌های گرد و نورانی، ناوبری جدید و ابزارهای
-      مدیریتی قرار گرفته است.
+      نوار ناوبری قبلی حذف شده و ابزارهای مدیریتی
+      داخل Dynamic Island قرار گرفته‌اند.
     </p>
 
     <p>
-      بخش رفع باگ یک روند 20 ثانیه‌ای دارد.
-      چهار مرحله هر کدام پنج ثانیه طول می‌کشند تا
-      کاربر بتواند روند بررسی را واضح ببیند.
+      این نسخه هیچ وابستگی به CDN یا کتابخانه خارجی
+      ندارد تا احتمال خطای بارگذاری در محیط‌هایی مثل
+      Cloudflare Pages و Cloudflare Workers کمتر شود.
     </p>
 
     <p>
-      بخش Server Cloud در این نسخه داده‌های فعالیت
-      را در فضای ذخیره‌سازی مرورگر نگه می‌دارد.
-      این کار برای بکاپ واقعی ابری کافی نیست، اما
-      پایه‌ای مناسب برای اتصال بعدی به API و دیتابیس است.
-    </p>
-
-    <p>
-      برای امنیت، این نسخه ادعای بررسی امنیت سرور
-      نمی‌کند. جاوااسکریپت داخل مرورگر نمی‌تواند
-      به شکل قابل اعتماد امنیت یک سرور را تأیید کند؛
-      بنابراین مرکز رفع باگ فقط بررسی‌های محلی و
-      قابل انجام در فرانت‌اند را انجام می‌دهد.
+      مرکز رفع باگ فقط مواردی را بررسی می‌کند که مرورگر
+      واقعاً اجازه بررسی آن‌ها را می‌دهد و ادعای بررسی
+      امنیت سرور یا Backend ندارد.
     </p>
 
   </div>
 
 </section>
 
-<!-- DONATE -->
+
+<!-- =====================================================
+     DONATE
+===================================================== -->
 
 <section class="section">
 
@@ -1402,20 +1817,24 @@ body[data-device="mobile"] .hero{
 
     <div class="donate-left">
 
-      <div class="donate-icon">❤️</div>
+      <div class="donate-icon">
+        ❤️
+      </div>
 
       <div>
 
-        <h2>حمایت از Music Master</h2>
+        <h2>
+          حمایت از Music Master
+        </h2>
 
         <p>
-          حمایت شما به توسعه نسخه‌های بعدی و آماده‌سازی
-          زیرساخت واقعی سایت و ربات کمک می‌کند.
+          حمایت شما به توسعه نسخه‌های بعدی پروژه کمک می‌کند.
         </p>
 
       </div>
 
     </div>
+
 
     <a
       class="donate-button"
@@ -1430,204 +1849,28 @@ body[data-device="mobile"] .hero{
 
 </section>
 
+
 <footer>
+
   © 2026 Music Master
+
   <br>
+
   🎵 ساخته شده برای علاقه‌مندان به موسیقی
+
   <br>
-  نسخه رسمی: <strong>1.4</strong>
+
+  نسخه رسمی:
+  <strong>1.5</strong>
+
 </footer>
 
 </div>
 
-<!-- BUG FIX MODAL -->
 
-<div id="bugfix" class="modal-bg hide">
-
-  <div class="modal">
-
-    <button
-      class="close"
-      onclick="closeModal('bugfix')"
-      aria-label="بستن"
-    >
-      ×
-    </button>
-
-    <div class="modal-icon">🛠️</div>
-
-    <h2>مرکز رفع باگ</h2>
-
-    <p class="modal-description">
-      برای رفع خطاهای اضافی رابط و بررسی سلامت محلی،
-      عملیات زیر را اجرا کنید.
-    </p>
-
-    <div class="red-note">
-      ⏱️ این عملیات دقیقاً 20 ثانیه طول می‌کشد
-      و چهار مرحله 5 ثانیه‌ای دارد.
-    </div>
-
-    <div class="stage-box">
-
-      <div id="bugSpinner" class="spinner">
-        🛡️
-      </div>
-
-      <div id="bugStageTitle" class="stage-title">
-        آماده شروع
-      </div>
-
-      <div class="progress">
-        <div
-          id="bugProgress"
-          class="progress-bar"
-        ></div>
-      </div>
-
-      <div class="stage-list">
-
-        <div id="stage1">
-          ۱. اتصال به پایگاه داده
-        </div>
-
-        <div id="stage2">
-          ۲. دریافت آدرس سرور
-        </div>
-
-        <div id="stage3">
-          ۳. بررسی و دریافت خطاهای سمت کاربر
-        </div>
-
-        <div id="stage4">
-          ۴. اعمال اصلاحات قابل انجام
-        </div>
-
-      </div>
-
-    </div>
-
-    <button
-      id="bugButton"
-      class="modal-button red"
-      onclick="startBugFix()"
-    >
-      شروع رفع باگ
-    </button>
-
-    <div class="small-muted">
-      این نسخه فقط بررسی‌های سمت مرورگر را انجام می‌دهد؛
-      بررسی واقعی سرور نیازمند API/Backend است.
-    </div>
-
-  </div>
-
-</div>
-
-<!-- CLOUD MODAL -->
-
-<div id="cloud" class="modal-bg hide">
-
-  <div class="modal">
-
-    <button
-      class="close"
-      onclick="closeModal('cloud')"
-      aria-label="بستن"
-    >
-      ×
-    </button>
-
-    <div class="modal-icon">☁️</div>
-
-    <h2>Server Cloud</h2>
-
-    <p class="modal-description">
-      بکاپ محلی فعالیت‌های قابل ذخیره در همین مرورگر.
-    </p>
-
-    <div class="cloud-stat">
-
-      <div>فضای استفاده‌شده</div>
-
-      <div
-        class="cloud-number"
-        id="cloudSize"
-      >
-        0 KB
-      </div>
-
-      <div
-        class="cloud-detail"
-        id="cloudDetail"
-      >
-        0 مورد ذخیره شده
-      </div>
-
-    </div>
-
-    <button
-      class="modal-button red"
-      onclick="askClearCloud()"
-    >
-      🗑️ خالی کردن حافظه
-    </button>
-
-    <div class="small-muted">
-      برای Cloud واقعی بین دستگاه‌ها، باید ذخیره‌سازی
-      سمت سرور به این رابط متصل شود.
-    </div>
-
-  </div>
-
-</div>
-
-<!-- CLOUD CONFIRM -->
-
-<div id="cloudConfirm" class="modal-bg hide">
-
-  <div class="modal">
-
-    <button
-      class="close"
-      onclick="closeModal('cloudConfirm')"
-      aria-label="بستن"
-    >
-      ×
-    </button>
-
-    <div class="modal-icon">⚠️</div>
-
-    <h2>حذف بکاپ‌ها؟</h2>
-
-    <p class="modal-description">
-      آیا از خالی کردن حافظه و حذف بکاپ‌های محلی
-      مطمئن هستید؟
-    </p>
-
-    <div class="confirm">
-
-      <button
-        class="yes"
-        onclick="clearCloud()"
-      >
-        بله، حذف شود
-      </button>
-
-      <button
-        class="no"
-        onclick="closeModal('cloudConfirm')"
-      >
-        نه
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- SETTINGS -->
+<!-- =====================================================
+     SETTINGS
+===================================================== -->
 
 <div id="settings" class="modal-bg hide">
 
@@ -1635,19 +1878,24 @@ body[data-device="mobile"] .hero{
 
     <button
       class="close"
+      type="button"
       onclick="closeModal('settings')"
-      aria-label="بستن"
     >
       ×
     </button>
 
-    <div class="modal-icon">⚙️</div>
+    <div class="modal-icon">
+      ⚙️
+    </div>
 
-    <h2>تنظیمات</h2>
+    <h2>
+      تنظیمات
+    </h2>
 
     <p class="modal-description">
-      کنترل حساب، ظاهر و اطلاعات نسخه.
+      مدیریت پروفایل و تنظیمات محلی
     </p>
+
 
     <div class="profile-card">
 
@@ -1663,13 +1911,20 @@ body[data-device="mobile"] .hero{
         کاربر مهمان
       </span>
 
+
       <div class="profile-actions">
 
-        <button onclick="editProfile()">
+        <button
+          type="button"
+          onclick="editProfile()"
+        >
           ✏️ ویرایش پروفایل
         </button>
 
-        <button onclick="resetProfile()">
+        <button
+          type="button"
+          onclick="resetProfile()"
+        >
           ↺ بازنشانی
         </button>
 
@@ -1677,22 +1932,17 @@ body[data-device="mobile"] .hero{
 
     </div>
 
-    <div class="red-note">
-      از آپدیت 1.10 سایت و ربات زمانی به‌روزرسانی می‌شوند
-      که سر ماه از پروژه حمایت و دونیت کرده باشید تا
-      هزینه ارتقا و زیرساخت پروژه تأمین شود.
-    </div>
 
     <div class="setting-row">
 
       <div class="setting-info">
 
         <strong>
-          🌙 حالت تیره
+          🌙 حالت تاریک
         </strong>
 
         <span>
-          ظاهر پایه نسخه 1.4
+          ظاهر اصلی نسخه 1.5
         </span>
 
       </div>
@@ -1712,156 +1962,14 @@ body[data-device="mobile"] .hero{
 
     </div>
 
-    <div class="setting-row">
-
-      <div class="setting-info">
-
-        <strong>
-          📱 حالت دستگاه
-        </strong>
-
-        <span id="deviceText">
-          تشخیص خودکار
-        </span>
-
-      </div>
-
-      <div
-        style="
-          color:#61efb0;
-          font-size:11px;
-          white-space:nowrap
-        "
-      >
-        خودکار ✓
-      </div>
-
-    </div>
-
-    <div class="small-muted">
-      دستگاه بدون نمایش پنجره اضافی به صورت خودکار
-      توسط مرورگر تشخیص داده می‌شود.
-    </div>
-
   </div>
 
 </div>
 
-<!-- UPDATES -->
 
-<div id="updates" class="modal-bg hide">
-
-  <div class="modal">
-
-    <button
-      class="close"
-      onclick="closeModal('updates')"
-      aria-label="بستن"
-    >
-      ×
-    </button>
-
-    <div class="modal-icon">⚡</div>
-
-    <div class="update-version">
-      VERSION 1.4
-    </div>
-
-    <h2>آپدیت 1.4</h2>
-
-    <p class="modal-description">
-      تغییرات اصلی این نسخه
-    </p>
-
-    <div class="update-list">
-
-      <div class="update-item">
-        🔵 بازطراحی کامل تم با محوریت آبی و نورپردازی نرم
-      </div>
-
-      <div class="update-item">
-        🧊 کارت‌ها و پنل‌های شیشه‌ای با blur کنترل‌شده
-      </div>
-
-      <div class="update-item">
-        🛠️ اضافه شدن مرکز رفع باگ 20 ثانیه‌ای
-      </div>
-
-      <div class="update-item">
-        ☁️ اضافه شدن Server Cloud برای بکاپ محلی
-      </div>
-
-      <div class="update-item">
-        👤 اضافه شدن پروفایل کاربر در تنظیمات
-      </div>
-
-      <div class="update-item">
-        📱 هماهنگی رابط برای موبایل و کامپیوتر
-      </div>
-
-      <div class="update-item">
-        🧹 حذف کامل Hyper و بهینه‌ساز از نسخه 1.4
-      </div>
-
-      <div class="update-item">
-        ⚡ حذف پنجره انتخاب دستگاه و تشخیص خودکار دستگاه
-      </div>
-
-      <div class="update-item">
-        🚀 بهینه‌سازی اجرای اولیه برای موبایل
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- BOT -->
-
-<div id="bot" class="modal-bg hide">
-
-  <div class="modal">
-
-    <button
-      class="close"
-      onclick="closeModal('bot')"
-      aria-label="بستن"
-    >
-      ×
-    </button>
-
-    <div class="modal-icon">🤖</div>
-
-    <h2>ربات Music Master</h2>
-
-    <p class="modal-description">
-      شناسه ربات را برای کپی لمس کنید.
-    </p>
-
-    <button
-      class="modal-button dark"
-      onclick="copyBot()"
-    >
-      @musicstarterebot
-    </button>
-
-    <div
-      id="copyResult"
-      class="small-muted"
-      style="
-        display:none;
-        color:#61efb0
-      "
-    >
-      شناسه کپی شد ✓
-    </div>
-
-  </div>
-
-</div>
-
-<!-- DONATE -->
+<!-- =====================================================
+     DONATE MODAL
+===================================================== -->
 
 <div id="donate" class="modal-bg hide">
 
@@ -1869,35 +1977,29 @@ body[data-device="mobile"] .hero{
 
     <button
       class="close"
+      type="button"
       onclick="closeModal('donate')"
-      aria-label="بستن"
     >
       ×
     </button>
 
-    <div class="modal-icon">❤️</div>
+    <div class="modal-icon">
+      ❤️
+    </div>
 
-    <h2>حمایت از پروژه</h2>
+    <h2>
+      حمایت از پروژه
+    </h2>
 
     <p class="modal-description">
-      اگر Music Master را دوست دارید، حمایت شما برای
-      توسعه نسخه‌های بعدی و زیرساخت واقعی پروژه ارزشمند است.
+      حمایت شما برای توسعه نسخه‌های آینده Music Master
+      ارزشمند است.
     </p>
-
-    <div class="red-note">
-      از نسخه 1.10 به بعد، طبق سیاست پروژه، ادامه ارتقا
-      سایت و ربات به حمایت‌های دوره‌ای وابسته خواهد بود.
-    </div>
 
     <button
       class="modal-button"
-      onclick="
-        window.open(
-          'https://reymit.ir/music.station',
-          '_blank',
-          'noopener,noreferrer'
-        )
-      "
+      type="button"
+      onclick="openDonate()"
     >
       ❤️ رفتن به صفحه دونیت
     </button>
@@ -1906,195 +2008,562 @@ body[data-device="mobile"] .hero{
 
 </div>
 
-<!-- TOAST -->
+
+<!-- =====================================================
+     BOT
+===================================================== -->
+
+<div id="bot" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      type="button"
+      onclick="closeModal('bot')"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">
+      🤖
+    </div>
+
+    <h2>
+      ربات Music Master
+    </h2>
+
+    <p class="modal-description">
+      برای کپی شناسه ربات روی آن بزنید.
+    </p>
+
+    <button
+      class="modal-button dark"
+      type="button"
+      onclick="copyBot()"
+    >
+      @musicstarterebot
+    </button>
+
+    <div
+      id="copyResult"
+      class="small-muted"
+      style="display:none;color:#61efb0"
+    >
+      شناسه کپی شد ✓
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     UPDATES
+===================================================== -->
+
+<div id="updates" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      type="button"
+      onclick="closeModal('updates')"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">
+      ⚡
+    </div>
+
+    <div class="update-version">
+      VERSION 1.5
+    </div>
+
+    <h2>
+      آپدیت 1.5
+    </h2>
+
+    <p class="modal-description">
+      تغییرات نسخه
+    </p>
+
+
+    <div class="update-list">
+
+      <div class="update-item">
+        🏝️ اضافه شدن Dynamic Island
+      </div>
+
+      <div class="update-item">
+        🧹 حذف نوار ناوبری قبلی
+      </div>
+
+      <div class="update-item">
+        📱 بهینه‌سازی موبایل
+      </div>
+
+      <div class="update-item">
+        💻 بهینه‌سازی کامپیوتر
+      </div>
+
+      <div class="update-item">
+        🛠️ بازنویسی مرکز رفع باگ
+      </div>
+
+      <div class="update-item">
+        ☁️ بهبود Server Cloud محلی
+      </div>
+
+      <div class="update-item">
+        ⚡ حذف وابستگی‌های خارجی
+      </div>
+
+      <div class="update-item">
+        🛡️ کاهش خطاهای JavaScript
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     CLOUD
+===================================================== -->
+
+<div id="cloud" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      type="button"
+      onclick="closeModal('cloud')"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">
+      ☁️
+    </div>
+
+    <h2>
+      Server Cloud
+    </h2>
+
+    <p class="modal-description">
+      اطلاعات این نسخه به صورت محلی در مرورگر ذخیره می‌شوند.
+    </p>
+
+
+    <div class="cloud-stat">
+
+      <div>
+        فضای استفاده‌شده
+      </div>
+
+      <div
+        class="cloud-number"
+        id="cloudSize"
+      >
+        0 KB
+      </div>
+
+      <div
+        class="cloud-detail"
+        id="cloudDetail"
+      >
+        0 مورد ذخیره شده
+      </div>
+
+    </div>
+
+
+    <button
+      class="modal-button red"
+      type="button"
+      onclick="askClearCloud()"
+    >
+      🗑️ خالی کردن حافظه
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     CLOUD CONFIRM
+===================================================== -->
+
+<div id="cloudConfirm" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      type="button"
+      onclick="closeModal('cloudConfirm')"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">
+      ⚠️
+    </div>
+
+    <h2>
+      حذف بکاپ‌ها؟
+    </h2>
+
+    <p class="modal-description">
+      آیا از حذف اطلاعات محلی مطمئن هستید؟
+    </p>
+
+
+    <div class="confirm">
+
+      <button
+        class="yes"
+        type="button"
+        onclick="clearCloud()"
+      >
+        بله، حذف شود
+      </button>
+
+      <button
+        class="no"
+        type="button"
+        onclick="closeModal('cloudConfirm')"
+      >
+        نه
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     BUG FIX
+===================================================== -->
+
+<div id="bugfix" class="modal-bg hide">
+
+  <div class="modal">
+
+    <button
+      class="close"
+      type="button"
+      onclick="closeModal('bugfix')"
+    >
+      ×
+    </button>
+
+    <div class="modal-icon">
+      🛠️
+    </div>
+
+    <h2>
+      مرکز رفع باگ
+    </h2>
+
+    <p class="modal-description">
+      این بخش بررسی‌های واقعی قابل انجام در مرورگر را اجرا می‌کند.
+    </p>
+
+
+    <div class="bug-status">
+
+      <div
+        id="bugIcon"
+        class="bug-icon"
+      >
+        🛡️
+      </div>
+
+      <div
+        id="bugTitle"
+        class="bug-title"
+      >
+        آماده بررسی
+      </div>
+
+
+      <div class="progress">
+
+        <div
+          id="bugProgress"
+          class="progress-bar"
+        ></div>
+
+      </div>
+
+
+      <div class="check-list">
+
+        <div
+          id="check1"
+          class="check-item"
+        >
+          ۱. بررسی JavaScript
+        </div>
+
+        <div
+          id="check2"
+          class="check-item"
+        >
+          ۲. بررسی localStorage
+        </div>
+
+        <div
+          id="check3"
+          class="check-item"
+        >
+          ۳. بررسی اطلاعات مرورگر
+        </div>
+
+        <div
+          id="check4"
+          class="check-item"
+        >
+          ۴. بررسی اتصال و وضعیت صفحه
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <button
+      id="bugButton"
+      class="modal-button red"
+      type="button"
+      onclick="startBugFix()"
+    >
+      🛠️ شروع بررسی
+    </button>
+
+
+    <div class="small-muted">
+      این ابزار خطاهای سمت مرورگر را بررسی می‌کند؛
+      امنیت واقعی سرور نیازمند Backend است.
+    </div>
+
+  </div>
+
+</div>
+
 
 <div
   id="toast"
   class="toast"
-  role="status"
-  aria-live="polite"
 ></div>
+
 
 <script>
 "use strict";
 
-/*
-  MUSIC MASTER 1.4
-  Stable / Cloudflare Ready
-*/
+/* =====================================================
+   CONSTANTS
+===================================================== */
 
-/* =========================
-   STORAGE KEYS
-========================= */
+const CLOUD_KEY = "musicMasterCloudV15";
+const PROFILE_KEY = "musicMasterProfileV15";
+const THEME_KEY = "musicMasterThemeV15";
 
-const CLOUD_KEY = "musicMasterCloudV14";
-const PROFILE_KEY = "musicMasterProfileV14";
-const THEME_KEY = "musicMasterThemeV14";
 
-/* =========================
+/* =====================================================
    SAFE HELPERS
-========================= */
+===================================================== */
 
 function $(id){
   return document.getElementById(id);
 }
 
-function openModal(id){
-  const el = $(id);
 
-  if(el){
-    el.classList.remove("hide");
-    document.body.style.overflow = "hidden";
+/* =====================================================
+   MODALS
+===================================================== */
+
+function openModal(id){
+
+  const element = $(id);
+
+  if(!element){
+    return;
   }
+
+  element.classList.remove("hide");
 }
+
 
 function closeModal(id){
-  const el = $(id);
 
-  if(el){
-    el.classList.add("hide");
+  const element = $(id);
+
+  if(!element){
+    return;
   }
 
-  if(
-    !document.querySelector(
-      ".modal-bg:not(.hide)"
-    )
-  ){
-    document.body.style.overflow = "";
-  }
+  element.classList.add("hide");
 }
 
-function closeAllModals(){
-  document.querySelectorAll(".modal-bg")
-    .forEach(function(modal){
-      modal.classList.add("hide");
-    });
 
-  document.body.style.overflow = "";
-}
-
-/* =========================
+/* =====================================================
    TOAST
-========================= */
+===================================================== */
+
+let toastTimer = null;
 
 function toast(message){
 
-  const el = $("toast");
+  const element = $("toast");
 
-  if(!el) return;
+  if(!element){
+    return;
+  }
 
-  el.textContent = message;
-  el.classList.add("show");
+  element.textContent = message;
+  element.classList.add("show");
 
-  clearTimeout(window.__toastTimer);
+  clearTimeout(toastTimer);
 
-  window.__toastTimer = setTimeout(
-    function(){
-      el.classList.remove("show");
-    },
-    2200
+  toastTimer = setTimeout(function(){
+
+    element.classList.remove("show");
+
+  },2200);
+}
+
+
+/* =====================================================
+   DYNAMIC ISLAND
+===================================================== */
+
+const dynamicIsland = $("dynamicIsland");
+const islandToggle = $("islandToggle");
+
+
+function closeIsland(){
+
+  if(!dynamicIsland){
+    return;
+  }
+
+  dynamicIsland.classList.remove("open");
+
+  if(islandToggle){
+    islandToggle.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    islandToggle.textContent = "☰";
+  }
+}
+
+
+function toggleIsland(){
+
+  if(!dynamicIsland){
+    return;
+  }
+
+  const isOpen =
+    dynamicIsland.classList.toggle("open");
+
+  if(islandToggle){
+
+    islandToggle.setAttribute(
+      "aria-expanded",
+      String(isOpen)
+    );
+
+    islandToggle.textContent =
+      isOpen ? "×" : "☰";
+  }
+}
+
+
+if(islandToggle){
+
+  islandToggle.addEventListener(
+    "click",
+    function(event){
+
+      event.stopPropagation();
+
+      toggleIsland();
+
+    }
   );
 }
 
-/* =========================
-   DEVICE
-   تشخیص کاملاً خودکار
-========================= */
+
+/* =====================================================
+   CLOSE ISLAND WHEN CLICKING OUTSIDE
+===================================================== */
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    if(
+      dynamicIsland &&
+      dynamicIsland.classList.contains("open") &&
+      !dynamicIsland.contains(event.target)
+    ){
+
+      closeIsland();
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   DEVICE DETECTION
+===================================================== */
 
 function detectDevice(){
 
-  const isMobile =
-    window.matchMedia &&
-    window.matchMedia(
-      "(max-width: 620px)"
-    ).matches;
-
-  const type =
-    isMobile
-      ? "mobile"
-      : "computer";
-
-  applyDevice(type);
-}
-
-function applyDevice(type){
-
-  document.body.dataset.device = type;
-
-  const heroDevice = $("heroDevice");
-  const deviceText = $("deviceText");
+  const width =
+    window.innerWidth ||
+    document.documentElement.clientWidth ||
+    0;
 
   const value =
-    type === "mobile"
+    width <= 700
       ? "موبایل"
       : "کامپیوتر";
 
-  if(heroDevice){
-    heroDevice.textContent = value;
-  }
+  const element =
+    $("heroDevice");
 
-  if(deviceText){
-    deviceText.textContent =
-      value + " • تشخیص خودکار";
+  if(element){
+    element.textContent = value;
   }
 }
 
-/* =========================
-   THEME
-========================= */
 
-function toggleTheme(enabled){
+window.addEventListener(
+  "resize",
+  detectDevice
+);
 
-  try{
 
-    document.body.style.filter =
-      enabled
-        ? "none"
-        : "brightness(1.08)";
-
-    localStorage.setItem(
-      THEME_KEY,
-      enabled ? "dark" : "soft"
-    );
-
-  }catch(e){
-
-    document.body.style.filter = "none";
-
-  }
-}
-
-function loadTheme(){
-
-  try{
-
-    const theme =
-      localStorage.getItem(THEME_KEY);
-
-    const enabled =
-      theme !== "soft";
-
-    document.body.style.filter =
-      enabled
-        ? "none"
-        : "brightness(1.08)";
-
-    const switchEl = $("themeSwitch");
-
-    if(switchEl){
-      switchEl.checked = enabled;
-    }
-
-  }catch(e){
-
-    document.body.style.filter = "none";
-
-  }
-}
-
-/* =========================
+/* =====================================================
    PROFILE
-========================= */
+===================================================== */
 
 function loadProfile(){
 
@@ -2102,16 +2571,19 @@ function loadProfile(){
 
   try{
 
-    profile =
-      JSON.parse(
-        localStorage.getItem(PROFILE_KEY) || "null"
-      );
+    const raw =
+      localStorage.getItem(PROFILE_KEY);
 
-  }catch(e){
+    if(raw){
+      profile = JSON.parse(raw);
+    }
+
+  }catch(error){
 
     profile = null;
 
   }
+
 
   if(
     !profile ||
@@ -2125,19 +2597,19 @@ function loadProfile(){
 
   }
 
-  const name = $("profileName");
-  const status = $("profileStatus");
 
-  if(name){
-    name.textContent =
-      String(profile.name || "Music Master User");
+  if($("profileName")){
+    $("profileName").textContent =
+      String(profile.name);
   }
 
-  if(status){
-    status.textContent =
-      String(profile.status || "کاربر مهمان");
+
+  if($("profileStatus")){
+    $("profileStatus").textContent =
+      String(profile.status);
   }
 }
+
 
 function editProfile(){
 
@@ -2146,30 +2618,36 @@ function editProfile(){
       ? $("profileName").textContent
       : "Music Master User";
 
+
   const name =
     window.prompt(
       "نام نمایشی پروفایل را وارد کنید:",
       current
     );
 
+
   if(name === null){
     return;
   }
 
+
   const clean =
     name.trim().slice(0,40);
+
 
   if(!clean){
 
     toast("نام معتبر وارد کنید");
-    return;
 
+    return;
   }
+
 
   const profile = {
     name:clean,
     status:"پروفایل محلی"
   };
+
 
   try{
 
@@ -2178,37 +2656,103 @@ function editProfile(){
       JSON.stringify(profile)
     );
 
-  }catch(e){
+    saveCloud("ویرایش پروفایل");
 
-    toast("ذخیره پروفایل ممکن نشد");
+  }catch(error){
+
+    toast("ذخیره پروفایل انجام نشد");
+
     return;
-
   }
 
+
   loadProfile();
-  saveCloud("ویرایش پروفایل");
 
   toast("پروفایل ذخیره شد ✓");
 }
 
+
 function resetProfile(){
 
   try{
-    localStorage.removeItem(PROFILE_KEY);
-  }catch(e){}
+
+    localStorage.removeItem(
+      PROFILE_KEY
+    );
+
+  }catch(error){}
+
 
   loadProfile();
 
   toast("پروفایل بازنشانی شد");
 }
 
-/* =========================
+
+/* =====================================================
+   THEME
+===================================================== */
+
+function toggleTheme(enabled){
+
+  try{
+
+    localStorage.setItem(
+      THEME_KEY,
+      enabled ? "dark" : "soft"
+    );
+
+  }catch(error){}
+
+
+  document.body.style.filter =
+    enabled
+      ? "none"
+      : "brightness(1.08)";
+
+}
+
+
+function loadTheme(){
+
+  let value = "dark";
+
+  try{
+
+    value =
+      localStorage.getItem(
+        THEME_KEY
+      ) || "dark";
+
+  }catch(error){}
+
+
+  const enabled =
+    value !== "soft";
+
+
+  document.body.style.filter =
+    enabled
+      ? "none"
+      : "brightness(1.08)";
+
+
+  if($("themeSwitch")){
+    $("themeSwitch").checked =
+      enabled;
+  }
+}
+
+
+/* =====================================================
    BOT
-========================= */
+===================================================== */
 
 async function copyBot(){
 
-  const id = "@musicstarterebot";
+  const id =
+    "@musicstarterebot";
+
 
   try{
 
@@ -2221,101 +2765,142 @@ async function copyBot(){
 
     }else{
 
-      throw new Error("Clipboard unavailable");
-
-    }
-
-  }catch(e){
-
-    try{
-
       const area =
         document.createElement("textarea");
 
       area.value = id;
-      area.setAttribute("readonly","");
-      area.style.position = "fixed";
-      area.style.opacity = "0";
+
+      area.setAttribute(
+        "readonly",
+        ""
+      );
+
+      area.style.position =
+        "fixed";
+
+      area.style.opacity =
+        "0";
 
       document.body.appendChild(area);
 
-      area.focus();
       area.select();
 
       document.execCommand("copy");
 
       area.remove();
 
-    }catch(copyError){
-
-      toast("کپی خودکار در این مرورگر در دسترس نیست");
-      return;
-
     }
+
+
+    if($("copyResult")){
+      $("copyResult").style.display =
+        "block";
+    }
+
+
+    toast("شناسه ربات کپی شد ✓");
+
+  }catch(error){
+
+    toast("کپی انجام نشد؛ شناسه: " + id);
+
   }
-
-  const result = $("copyResult");
-
-  if(result){
-    result.style.display = "block";
-  }
-
-  toast("شناسه ربات کپی شد ✓");
 }
 
-/* =========================
+
+/* =====================================================
+   DONATE
+===================================================== */
+
+function openDonate(){
+
+  window.open(
+    "https://reymit.ir/music.station",
+    "_blank",
+    "noopener,noreferrer"
+  );
+
+}
+
+
+/* =====================================================
    CLOUD
-========================= */
+===================================================== */
 
 function getCloud(){
 
   try{
 
-    const data =
-      JSON.parse(
-        localStorage.getItem(CLOUD_KEY) || "[]"
+    const raw =
+      localStorage.getItem(
+        CLOUD_KEY
       );
+
+    if(!raw){
+      return [];
+    }
+
+
+    const data =
+      JSON.parse(raw);
+
 
     return Array.isArray(data)
       ? data
       : [];
 
-  }catch(e){
+  }catch(error){
 
     return [];
 
   }
 }
 
+
 function saveCloud(action){
 
   try{
 
-    const data = getCloud();
+    const data =
+      getCloud();
+
 
     data.push({
-      time:new Date().toISOString(),
-      action:String(action).slice(0,120)
+
+      time:
+        new Date().toISOString(),
+
+      action:
+        String(action).slice(0,120)
+
     });
+
 
     while(data.length > 250){
       data.shift();
     }
+
 
     localStorage.setItem(
       CLOUD_KEY,
       JSON.stringify(data)
     );
 
-  }catch(e){
+  }catch(error){
 
     /*
-      اگر localStorage در مرورگر بسته باشد،
+      اگر localStorage پر یا مسدود باشد،
       سایت نباید خراب شود.
     */
 
+    console.warn(
+      "Cloud storage unavailable",
+      error
+    );
+
   }
 }
+
 
 function estimateBytes(data){
 
@@ -2325,160 +2910,314 @@ function estimateBytes(data){
       JSON.stringify(data)
     ]).size;
 
-  }catch(e){
+  }catch(error){
 
     return 0;
 
   }
 }
 
+
 function formatBytes(bytes){
 
   if(bytes < 1024){
+
     return bytes + " B";
+
   }
+
 
   if(bytes < 1024 * 1024){
+
     return (
-      (bytes / 1024).toFixed(1)
-      + " KB"
-    );
+      bytes / 1024
+    ).toFixed(1) + " KB";
+
   }
 
+
   return (
-    (bytes / (1024 * 1024)).toFixed(2)
-    + " MB"
-  );
+    bytes /
+    (1024 * 1024)
+  ).toFixed(2) + " MB";
 }
+
 
 function updateCloudUI(){
 
-  const data = getCloud();
+  const data =
+    getCloud();
 
-  const size = $("cloudSize");
-  const detail = $("cloudDetail");
 
-  if(size){
-    size.textContent =
+  if($("cloudSize")){
+
+    $("cloudSize").textContent =
       formatBytes(
         estimateBytes(data)
       );
+
   }
 
-  if(detail){
-    detail.textContent =
+
+  if($("cloudDetail")){
+
+    $("cloudDetail").textContent =
       data.length +
       " مورد ذخیره شده";
+
   }
 }
+
 
 function askClearCloud(){
 
   closeModal("cloud");
+
   openModal("cloudConfirm");
+
 }
+
 
 function clearCloud(){
 
-  closeModal("cloudConfirm");
+  try{
 
-  const spinner =
-    document.createElement("div");
+    localStorage.removeItem(
+      CLOUD_KEY
+    );
 
-  spinner.className = "modal-bg";
+    closeModal("cloudConfirm");
 
-  spinner.innerHTML = `
-    <div class="modal" style="text-align:center">
-      <div class="modal-icon">☁️</div>
-      <h2>در حال پاک‌سازی</h2>
-      <p class="modal-description">
-        حافظه محلی در حال خالی شدن است...
-      </p>
-      <div class="spinner loading">☁️</div>
-      <div id="clearTimer" class="stage-title">
-        4 ثانیه
-      </div>
-    </div>
-  `;
+    updateCloudUI();
 
-  document.body.appendChild(spinner);
+    toast(
+      "حافظه محلی پاک شد ✓"
+    );
 
-  document.body.style.overflow = "hidden";
+  }catch(error){
 
-  let left = 4;
+    toast(
+      "پاک‌سازی حافظه انجام نشد"
+    );
 
-  const timer =
-    setInterval(function(){
+  }
 
-      left--;
-
-      const t =
-        spinner.querySelector("#clearTimer");
-
-      if(t){
-        t.textContent =
-          left + " ثانیه";
-      }
-
-      if(left <= 0){
-
-        clearInterval(timer);
-
-        try{
-          localStorage.removeItem(CLOUD_KEY);
-        }catch(e){}
-
-        spinner.remove();
-
-        updateCloudUI();
-
-        document.body.style.overflow = "";
-
-        toast("حافظه محلی پاک شد ✓");
-      }
-
-    },1000);
 }
 
-/* =========================
-   BUG FIX
-========================= */
 
-const bugStages = [
-  "اتصال به پایگاه داده",
-  "دریافت آدرس سرور",
-  "بررسی و دریافت خطاهای سمت کاربر",
-  "اعمال اصلاحات قابل انجام"
-];
+/* =====================================================
+   BUG CENTER
+===================================================== */
 
 let bugRunning = false;
 
-function setStage(index){
 
-  bugStages.forEach(
-    function(_,i){
+const bugChecks = [
 
-      const el =
-        $("stage" + (i + 1));
+  {
+    id:"check1",
+    title:"بررسی JavaScript"
+  },
 
-      if(el){
-        el.classList.toggle(
-          "active",
-          i === index
-        );
-      }
+  {
+    id:"check2",
+    title:"بررسی localStorage"
+  },
+
+  {
+    id:"check3",
+    title:"بررسی اطلاعات مرورگر"
+  },
+
+  {
+    id:"check4",
+    title:"بررسی اتصال و وضعیت صفحه"
+  }
+
+];
+
+
+function resetBugUI(){
+
+  if($("bugProgress")){
+    $("bugProgress").style.width =
+      "0%";
+  }
+
+
+  if($("bugTitle")){
+    $("bugTitle").textContent =
+      "آماده بررسی";
+  }
+
+
+  if($("bugIcon")){
+
+    $("bugIcon").classList.remove(
+      "loading"
+    );
+
+    $("bugIcon").textContent =
+      "🛡️";
+
+  }
+
+
+  bugChecks.forEach(function(item){
+
+    const element =
+      $(item.id);
+
+    if(element){
+
+      element.classList.remove(
+        "active",
+        "done"
+      );
+
+      element.textContent =
+        item.title;
 
     }
-  );
 
-  const title =
-    $("bugStageTitle");
+  });
 
-  if(title){
-    title.textContent =
-      bugStages[index];
+}
+
+
+function testJavaScript(){
+
+  try{
+
+    const test =
+      10 + 10;
+
+    return test === 20;
+
+  }catch(error){
+
+    return false;
+
   }
 }
+
+
+function testLocalStorage(){
+
+  try{
+
+    const key =
+      "__mm_test_" +
+      Date.now();
+
+    localStorage.setItem(
+      key,
+      "ok"
+    );
+
+    const result =
+      localStorage.getItem(
+        key
+      ) === "ok";
+
+    localStorage.removeItem(
+      key
+    );
+
+    return result;
+
+  }catch(error){
+
+    return false;
+
+  }
+}
+
+
+function testBrowser(){
+
+  try{
+
+    return Boolean(
+      navigator.userAgent &&
+      window.innerWidth > 0 &&
+      window.innerHeight > 0
+    );
+
+  }catch(error){
+
+    return false;
+
+  }
+}
+
+
+function testConnection(){
+
+  return navigator.onLine !== false;
+}
+
+
+function setBugCheck(
+  index,
+  state,
+  result
+){
+
+  const item =
+    bugChecks[index];
+
+  if(!item){
+    return;
+  }
+
+
+  const element =
+    $(item.id);
+
+
+  if(!element){
+    return;
+  }
+
+
+  element.classList.remove(
+    "active",
+    "done"
+  );
+
+
+  if(state === "active"){
+
+    element.classList.add(
+      "active"
+    );
+
+    element.textContent =
+      item.title +
+      " ...";
+
+  }
+
+
+  if(state === "done"){
+
+    element.classList.add(
+      "done"
+    );
+
+    element.textContent =
+      item.title +
+      (
+        result
+          ? " ✓"
+          : " ⚠️"
+      );
+
+  }
+
+}
+
 
 function startBugFix(){
 
@@ -2486,211 +3225,365 @@ function startBugFix(){
     return;
   }
 
+
   bugRunning = true;
 
-  const button = $("bugButton");
-  const spinner = $("bugSpinner");
-  const progress = $("bugProgress");
+
+  const button =
+    $("bugButton");
+
 
   if(button){
 
     button.disabled = true;
+
     button.textContent =
       "در حال بررسی...";
 
   }
 
-  if(spinner){
-    spinner.classList.add("loading");
+
+  resetBugUI();
+
+
+  if($("bugIcon")){
+
+    $("bugIcon").classList.add(
+      "loading"
+    );
+
   }
 
-  if(progress){
-    progress.style.width = "0%";
+
+  if($("bugTitle")){
+
+    $("bugTitle").textContent =
+      "در حال اجرای بررسی‌ها...";
+
   }
 
-  saveCloud("شروع مرکز رفع باگ");
 
-  let elapsed = 0;
+  saveCloud(
+    "شروع بررسی مرکز رفع باگ"
+  );
 
-  setStage(0);
 
-  const timer =
-    setInterval(
-      function(){
+  const checks = [
 
-        elapsed++;
+    testJavaScript,
 
-        if(progress){
+    testLocalStorage,
 
-          progress.style.width =
-            ((elapsed / 20) * 100) + "%";
+    testBrowser,
 
-        }
+    testConnection
 
-        const stage =
-          Math.min(
-            3,
-            Math.floor(
-              (elapsed - 1) / 5
-            )
+  ];
+
+
+  let index = 0;
+
+  let passed = 0;
+
+
+  function runNext(){
+
+    if(index >= checks.length){
+
+      finishBugFix(
+        passed,
+        checks.length
+      );
+
+      return;
+    }
+
+
+    setBugCheck(
+      index,
+      "active",
+      false
+    );
+
+
+    const current =
+      index;
+
+
+    setTimeout(function(){
+
+      let result = false;
+
+      try{
+
+        result =
+          Boolean(
+            checks[current]()
           );
 
-        setStage(stage);
+      }catch(error){
 
-        if(elapsed >= 20){
+        result = false;
 
-          clearInterval(timer);
+      }
 
-          finishBugFix();
 
-        }
+      if(result){
+        passed++;
+      }
 
-      },
-      1000
-    );
+
+      setBugCheck(
+        current,
+        "done",
+        result
+      );
+
+
+      const percent =
+        (
+          ((current + 1) /
+          checks.length) *
+          100
+        );
+
+
+      if($("bugProgress")){
+
+        $("bugProgress").style.width =
+          percent + "%";
+
+      }
+
+
+      index++;
+
+      runNext();
+
+    },650);
+
+  }
+
+
+  runNext();
 }
 
-function finishBugFix(){
 
-  const spinner = $("bugSpinner");
-  const title = $("bugStageTitle");
-  const button = $("bugButton");
-  const security = $("liveSecurity");
-
-  if(spinner){
-    spinner.classList.remove("loading");
-  }
-
-  if(title){
-    title.textContent =
-      "بررسی کامل شد ✓";
-  }
-
-  if(button){
-
-    button.disabled = false;
-
-    button.textContent =
-      "اجرای دوباره رفع باگ";
-
-  }
-
-  if(security){
-    security.textContent =
-      "بررسی شد";
-  }
+function finishBugFix(
+  passed,
+  total
+){
 
   bugRunning = false;
 
-  saveCloud("پایان مرکز رفع باگ");
+
+  if($("bugIcon")){
+
+    $("bugIcon").classList.remove(
+      "loading"
+    );
+
+    $("bugIcon").textContent =
+      passed === total
+        ? "✓"
+        : "⚠️";
+
+  }
+
+
+  if($("bugTitle")){
+
+    $("bugTitle").textContent =
+      "بررسی کامل شد: " +
+      passed +
+      " از " +
+      total +
+      " مورد سالم است";
+
+  }
+
+
+  if($("bugButton")){
+
+    $("bugButton").disabled =
+      false;
+
+    $("bugButton").textContent =
+      "اجرای دوباره بررسی";
+
+  }
+
+
+  if($("liveSecurity")){
+
+    $("liveSecurity").textContent =
+      passed === total
+        ? "پایدار ✓"
+        : "نیازمند بررسی";
+
+  }
+
+
+  saveCloud(
+    "پایان بررسی مرکز رفع باگ: " +
+    passed +
+    "/" +
+    total
+  );
+
 
   toast(
-    "رفع باگ محلی با موفقیت تمام شد ✓"
+    passed === total
+      ? "همه بررسی‌های محلی موفق بود ✓"
+      : "بررسی تمام شد؛ چند مورد نیاز به توجه دارد"
   );
+
 }
 
-/* =========================
-   MODAL EVENTS
-========================= */
 
-function setupModalEvents(){
+/* =====================================================
+   MODAL BACKDROP
+===================================================== */
 
-  document
-    .querySelectorAll(".modal-bg")
-    .forEach(
-      function(modal){
+document.querySelectorAll(
+  ".modal-bg"
+).forEach(function(modal){
 
-        modal.addEventListener(
-          "click",
-          function(e){
+  modal.addEventListener(
+    "click",
+    function(event){
 
-            if(
-              e.target === modal
-            ){
+      if(
+        event.target === modal
+      ){
 
-              closeModal(modal.id);
-
-            }
-
-          }
+        modal.classList.add(
+          "hide"
         );
 
-      }
-    );
-
-}
-
-/* =========================
-   RESIZE
-========================= */
-
-let resizeTimer = null;
-
-function handleResize(){
-
-  clearTimeout(resizeTimer);
-
-  resizeTimer =
-    setTimeout(
-      function(){
-        detectDevice();
-      },
-      100
-    );
-}
-
-/* =========================
-   KEYBOARD
-========================= */
-
-function setupKeyboard(){
-
-  document.addEventListener(
-    "keydown",
-    function(e){
-
-      if(e.key === "Escape"){
-        closeAllModals();
       }
 
     }
   );
 
+});
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(event.key === "Escape"){
+
+      document
+        .querySelectorAll(
+          ".modal-bg"
+        )
+        .forEach(function(modal){
+
+          modal.classList.add(
+            "hide"
+          );
+
+        });
+
+      closeIsland();
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   ONLINE / OFFLINE
+===================================================== */
+
+function updateConnection(){
+
+  const server =
+    $("liveServer");
+
+  if(!server){
+    return;
+  }
+
+
+  if(navigator.onLine){
+
+    server.textContent =
+      "متصل";
+
+  }else{
+
+    server.textContent =
+      "آفلاین";
+
+  }
+
 }
 
-/* =========================
-   INITIALIZATION
-========================= */
+
+window.addEventListener(
+  "online",
+  updateConnection
+);
+
+
+window.addEventListener(
+  "offline",
+  updateConnection
+);
+
+
+/* =====================================================
+   INIT
+===================================================== */
 
 function init(){
 
   /*
-    مهم:
-    هیچ Modal دستگاهی در شروع باز نمی‌شود.
+    هیچ مودال یا پنجره‌ای خودکار باز نمی‌شود.
+    این بخش یکی از مشکلات نسخه قبلی بود.
   */
 
   detectDevice();
-  loadTheme();
+
   loadProfile();
+
+  loadTheme();
+
   updateCloudUI();
-  setupModalEvents();
-  setupKeyboard();
+
+  updateConnection();
+
 
   saveCloud(
-    "ورود به سایت نسخه 1.4"
+    "ورود به Music Master v1.5"
   );
+
 }
 
-/* اجرای اولیه بدون تأخیر */
+
+/* =====================================================
+   START
+===================================================== */
 
 if(
-  document.readyState === "loading"
+  document.readyState ===
+  "loading"
 ){
 
   document.addEventListener(
     "DOMContentLoaded",
     init,
-    {once:true}
+    {
+      once:true
+    }
   );
 
 }else{
@@ -2699,24 +3592,26 @@ if(
 
 }
 
-/* تشخیص خودکار تغییر اندازه */
 
-window.addEventListener(
-  "resize",
-  handleResize,
-  {passive:true}
-);
-
-/* ثبت خروج */
+/* =====================================================
+   SAFE UNLOAD
+===================================================== */
 
 window.addEventListener(
   "beforeunload",
   function(){
-    saveCloud(
-      "خروج از سایت نسخه 1.4"
-    );
+
+    try{
+
+      saveCloud(
+        "خروج از Music Master v1.5"
+      );
+
+    }catch(error){}
+
   }
 );
+
 </script>
 
 </body>
