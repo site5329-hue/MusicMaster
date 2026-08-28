@@ -1,0 +1,16 @@
+window.MUSIC_MASTER_UPDATE = {
+  version: "1.6",
+
+  title: "Music Master 1.6",
+
+  description: "نسخه جدید Music Master منتشر شد.",
+
+  updateUrl: "https://musicmaster-omlr.onrender.com/",
+
+  changes: [
+    "رفع باگ‌های نسخه قبلی",
+    "بهبود عملکرد",
+    "بهبود Dynamic Island",
+    "بهبود رابط کاربری"
+  ]
+};
